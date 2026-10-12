@@ -89,7 +89,13 @@ int main(int argc, char *argv[]) {
             printf("[0x%03X] %s (DLC: %u)\n", msg.can_id, decoded.message_name, msg.dlc);
             for (size_t s = 0; s < decoded.signal_count; s++) {
                 printf("  -> %s: %.2f %s\n", decoded.signals[s].signal_name, decoded.signals[s].physical_value, decoded.signals[s].unit);
+                fprintf(csv_fp, "%s,%.4f,0x%03X,%u,%s,%u,,%s,%ld,%.4f,%s\n",
+                        msg.timestamp_iso, msg.timestamp_sec, msg.can_id, msg.can_id,
+                        decoded.message_name, msg.dlc, decoded.signals[s].signal_name,
+                        (long)decoded.signals[s].raw_value, decoded.signals[s].physical_value, decoded.signals[s].unit);
             }
+            fflush(csv_fp);
+        }
         }
     }
     fclose(csv_fp);
