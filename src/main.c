@@ -58,6 +58,15 @@ int main(int argc, char *argv[]) {
         return 1;
     }
     printf("Loaded %zu messages from DBC\n", dbc_db->message_count);
+    printf("Connecting to CAN interface: %s...\n", interface_name);
+    can_bus_t *bus = can_bus_init(interface_name, force_mock, 10);
+    if (!bus) {
+        fprintf(stderr, "Failed to initialize CAN bus\n");
+        dbc_free(dbc_db);
+        return 1;
+    }
+    printf("CAN bus active (Mock: %s)\n", can_bus_is_mock(bus) ? "yes" : "no");
+    can_bus_close(bus);
     dbc_free(dbc_db);
     return 0;
 }
