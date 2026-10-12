@@ -51,5 +51,13 @@ int main(int argc, char *argv[]) {
         }
     }
     print_banner();
+    printf("Loading DBC database: %s...\n", dbc_file);
+    dbc_database_t *dbc_db = dbc_load_file(dbc_file);
+    if (!dbc_db) {
+        fprintf(stderr, "Error loading DBC file %s\n", dbc_file);
+        return 1;
+    }
+    printf("Loaded %zu messages from DBC\n", dbc_db->message_count);
+    dbc_free(dbc_db);
     return 0;
 }
