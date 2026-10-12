@@ -384,3 +384,4 @@ Expected output:
 This project is licensed under the terms of the [MIT License](LICENSE).
 
 <!-- Verification: Local Makefile compilation, test suite, and execution verified cleanly -->
+<!-- Release: v1.0.0 Ready for deployment on GitHub -->
