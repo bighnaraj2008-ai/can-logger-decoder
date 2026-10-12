@@ -58,3 +58,14 @@ cansend vcan0 101#805F018D00000000
 # Continuous traffic generator
 cangen vcan0 -g 50 -I 100 -L 8
 ```
+
+## DBC File Format Guide
+
+Vector DBC files describe how binary payloads map to physical parameters:
+```dbc
+BO_ <MessageID> <MessageName>: <DLC> <Sender>
+ SG_ <SignalName> : <StartBit>|<Length>@<Endian><Sign> (<Scale>,<Offset>) [<Min>|<Max>] "<Unit>" <Receivers>
+```
+
+Scaling formula:
+$$\text{Physical Value} = (\text{Raw Value} \times \text{Scale}) + \text{Offset}$$
