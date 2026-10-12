@@ -18,6 +18,38 @@ static void rtrim(char *s) {
     }
 }
 
+static bool parse_signal_line(char *line, dbc_signal_t *sig) {
+    memset(sig, 0, sizeof(*sig));
+    sig->scale = 1.0;
+    sig->offset = 0.0;
+
+    char *p = ltrim(line);
+    if (strncmp(p, "SG_ ", 4) != 0) return false;
+    p += 4;
+    p = ltrim(p);
+
+    char *name_start = p;
+    while (*p && !isspace((unsigned char)*p) && *p != ':') p++;
+    size_t name_len = (size_t)(p - name_start);
+    if (name_len == 0 || name_len >= sizeof(sig->name)) return false;
+    snprintf(sig->name, sizeof(sig->name), "%.*s", (int)name_len, name_start);
+
+    p = strchr(p, ':');
+    if (!p) return false;
+    p++;
+    p = ltrim(p);
+
+    unsigned int start_bit = 0, bit_len = 0, endian_val = 1;
+    char sign_char = '+';
+    if (sscanf(p, "%u|%u@%1u%c", &start_bit, &bit_len, &endian_val, &sign_char) != 4) return false;
+
+    sig->start_bit = (uint8_t)start_bit;
+    sig->bit_len = (uint8_t)bit_len;
+    sig->endian = (endian_val == 1) ? CAN_ENDIAN_LITTLE : CAN_ENDIAN_BIG;
+    sig->sign = (sign_char == '-') ? CAN_SIGN_SIGNED : CAN_SIGN_UNSIGNED;
+    return true;
+}
+
 static bool parse_message_line(char *line, dbc_message_t *msg) {
     memset(msg, 0, sizeof(*msg));
     char *p = ltrim(line);
