@@ -1,0 +1,27 @@
+# Compiled binaries
+can_decoder
+can_decoder.exe
+test_suite
+test_suite.exe
+
+# Object files and build artifacts
+*.o
+src/*.o
+build/
+
+# Telemetry logs and recordings
+*.csv
+can_log.csv
+can_log_*.csv
+
+# Editor and IDE configurations
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.directory
+
+# Operating System files
+.DS_Store
+Thumbs.db
