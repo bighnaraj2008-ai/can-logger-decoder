@@ -43,3 +43,18 @@ make run
 # Clean build artifacts
 make clean
 ```
+
+## Virtual SocketCAN (vcan0) Testing Instructions
+
+Test frames can be injected onto `vcan0` using `can-utils`:
+
+```bash
+# Send Engine Data (ID 0x100): RPM = 2500, Speed = 80.5 km/h
+cansend vcan0 100#1027721F7F820000
+
+# Send Engine Status (ID 0x101): Coolant = 88 degC, Battery = 14.1 V
+cansend vcan0 101#805F018D00000000
+
+# Continuous traffic generator
+cangen vcan0 -g 50 -I 100 -L 8
+```
