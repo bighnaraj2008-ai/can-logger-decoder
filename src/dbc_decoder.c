@@ -265,3 +265,20 @@ void dbc_free(dbc_database_t *db) {
     free(db);
 }
 
+
+const dbc_message_t* dbc_find_message(const dbc_database_t *db, uint32_t can_id) {
+    if (!db) return NULL;
+    for (size_t i = 0; i < db->message_count; i++) {
+        if (db->messages[i].id == can_id) return &db->messages[i];
+    }
+    return NULL;
+}
+
+void dbc_print_summary(const dbc_database_t *db) {
+    if (!db) return;
+    printf("\n=== DBC Summary: %s (Messages: %zu) ===\n", db->filepath, db->message_count);
+    for (size_t i = 0; i < db->message_count; i++) {
+        const dbc_message_t *m = &db->messages[i];
+        printf(" [0x%03X] %s (DLC: %u, Signals: %zu)\n", m->id, m->name, m->dlc, m->signal_count);
+    }
+}
