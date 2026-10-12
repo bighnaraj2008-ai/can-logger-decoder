@@ -10,3 +10,18 @@ Controller Area Network (CAN) is the broadcast vehicle bus standard designed to 
 - Powertrain metrics (Engine RPM, vehicle velocity, throttle position)
 - Health diagnostics (Coolant temp, oil temp, battery rail voltage)
 - Active safety (Braking hydraulic pressure, ABS intervention flags)
+
+## Hardware Requirements & Virtual Interfaces
+
+### Physical Hardware Options
+1. **Microcontroller + CAN Controller**: Raspberry Pi / Arduino with MCP2515 SPI CAN transceiver board.
+2. **USB-to-CAN Analyzers**: CandleLight, CANable, or Peak PCAN-USB adapters supporting native Linux SocketCAN `slcan` / `gs_usb`.
+3. **OBD-II Interface**: OBD-II to DB9 cable connected to vehicle CAN High / Low lines.
+
+### Virtual CAN (vcan0) Interface
+When testing on workstations without hardware, Linux SocketCAN provides the `vcan` kernel module:
+```bash
+sudo modprobe vcan
+sudo ip link add dev vcan0 type vcan
+sudo ip link set up vcan0
+```
