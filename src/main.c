@@ -82,6 +82,11 @@ int main(int argc, char *argv[]) {
         int res = can_bus_read(bus, &msg, 100);
         if (res <= 0) continue;
         total_frames++;
+        const dbc_message_t *msg_def = dbc_find_message(dbc_db, msg.can_id);
+        if (msg_def) {
+            dbc_decoded_message_t decoded;
+            dbc_decode_message(msg_def, msg.data, msg.dlc, &decoded);
+        }
     }
     fclose(csv_fp);
     can_bus_close(bus);
