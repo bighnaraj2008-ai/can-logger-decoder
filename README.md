@@ -25,3 +25,21 @@ sudo modprobe vcan
 sudo ip link add dev vcan0 type vcan
 sudo ip link set up vcan0
 ```
+
+## Compilation & Makefile Targets
+
+The project compiles with strict standard flags: `-Wall -Wextra -std=gnu99 -O2 -Iinclude -lm`.
+
+```bash
+# Build main binary (can_decoder)
+make all
+
+# Run test suite
+make test
+
+# Run demo with 20 frames
+make run
+
+# Clean build artifacts
+make clean
+```
