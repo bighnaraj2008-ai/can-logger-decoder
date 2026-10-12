@@ -76,6 +76,13 @@ int main(int argc, char *argv[]) {
     }
     fprintf(csv_fp, "Timestamp_ISO,Timestamp_Sec,CAN_ID_Hex,CAN_ID_Dec,Message_Name,DLC,Payload_Hex,Signal_Name,Raw_Value,Physical_Value,Unit\n");
     fflush(csv_fp);
+    can_msg_t msg;
+    uint64_t total_frames = 0;
+    while (max_frames == 0 || total_frames < max_frames) {
+        int res = can_bus_read(bus, &msg, 100);
+        if (res <= 0) continue;
+        total_frames++;
+    }
     fclose(csv_fp);
     can_bus_close(bus);
     dbc_free(dbc_db);
