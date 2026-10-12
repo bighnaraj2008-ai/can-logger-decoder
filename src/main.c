@@ -86,6 +86,10 @@ int main(int argc, char *argv[]) {
         if (msg_def) {
             dbc_decoded_message_t decoded;
             dbc_decode_message(msg_def, msg.data, msg.dlc, &decoded);
+            printf("[0x%03X] %s (DLC: %u)\n", msg.can_id, decoded.message_name, msg.dlc);
+            for (size_t s = 0; s < decoded.signal_count; s++) {
+                printf("  -> %s: %.2f %s\n", decoded.signals[s].signal_name, decoded.signals[s].physical_value, decoded.signals[s].unit);
+            }
         }
     }
     fclose(csv_fp);
