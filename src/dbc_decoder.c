@@ -370,3 +370,89 @@ int dbc_decode_message(const dbc_message_t *msg_def, const uint8_t *payload, uin
     return (int)result->signal_count;
 }
 
+int dbc_encode_signal(const dbc_signal_t *sig, double physical_value, uint8_t *data, uint8_t dlc) {
+    if (!sig || !data) return -1;
+
+    int64_t raw_val = (int64_t)round((physical_value - sig->offset) / sig->scale);
+
+    if (sig->endian == CAN_ENDIAN_LITTLE) {
+        uint64_t raw_bits = (uint64_t)raw_val;
+        for (uint8_t i = 0; i < sig->bit_len; i++) {
+            uint8_t bit_pos = sig->start_bit + i;
+            uint8_t byte_idx = bit_pos / 8;
+            uint8_t bit_in_byte = bit_pos % 8;
+
+            if (byte_idx < dlc) {
+                uint8_t bit_val = (uint8_t)((raw_bits >> i) & 0x01);
+                data[byte_idx] &= (uint8_t)(~(1 << bit_in_byte));
+                data[byte_idx] |= (uint8_t)(bit_val << bit_in_byte);
+            }
+        }
+        return 0;
+    }
+
+    /* Big endian encoding */
+    uint64_t raw_bits = (uint64_t)raw_val;
+    uint8_t current_bit = sig->start_bit;
+    for (uint8_t i = 0; i < sig->bit_len; i++) {
+        uint8_t byte_idx = current_bit / 8;
+        uint8_t bit_in_byte = current_bit % 8;
+
+        if (byte_idx < dlc) {
+            uint8_t bit_val = (uint8_t)((raw_bits >> (sig->bit_len - 1 - i)) & 0x01);
+            data[byte_idx] &= (uint8_t)(~(1 << bit_in_byte));
+            data[byte_idx] |= (uint8_t)(bit_val << bit_in_byte);
+        }
+
+        if (bit_in_byte == 0) {
+            current_bit += 15;
+        } else {
+            current_bit -= 1;
+        }
+    }
+
+    return 0;
+}
+
+void dbc_print_summary(const dbc_database_t *db) {
+    if (!db) {
+        printf("DBC database is NULL.\n");
+        return;
+    }
+
+    printf("\n================================================================================\n");
+    printf(" CAN DBC Database Summary: %s\n", db->filepath);
+    printf(" Total Defined Messages: %zu\n", db->message_count);
+    printf("================================================================================\n");
+
+    for (size_t i = 0; i < db->message_count; i++) {
+        const dbc_message_t *m = &db->messages[i];
+        printf("\n [Message %zu] 0x%03X (%u) : %s  [DLC: %u, Node: %s]\n",
+               i + 1, m->id, m->id, m->name, m->dlc, m->transmitter);
+        if (strlen(m->comment) > 0) {
+            printf("   Note: %s\n", m->comment);
+        }
+        printf("   %-24s %-10s %-8s %-12s %-12s %-16s %-8s\n",
+               "Signal Name", "Start|Len", "Endian", "Scale", "Offset", "Range [Min|Max]", "Unit");
+        printf("   ------------------------------------------------------------------------------------\n");
+
+        for (size_t s = 0; s < m->signal_count; s++) {
+            const dbc_signal_t *sig = &m->signals[s];
+            char bit_spec[16];
+            snprintf(bit_spec, sizeof(bit_spec), "%u|%u", sig->start_bit, sig->bit_len);
+
+            char range_spec[20];
+            snprintf(range_spec, sizeof(range_spec), "[%.1f|%.1f]", sig->min, sig->max);
+
+            printf("   %-24s %-10s %-8s %-12g %-12g %-16s %-8s\n",
+                   sig->name,
+                   bit_spec,
+                   (sig->endian == CAN_ENDIAN_LITTLE) ? "Intel" : "Motorola",
+                   sig->scale,
+                   sig->offset,
+                   range_spec,
+                   sig->unit);
+        }
+    }
+    printf("================================================================================\n\n");
+}
