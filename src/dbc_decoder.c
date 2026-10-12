@@ -5,12 +5,15 @@
 #include <stdlib.h>
 #include <string.h>
 #include <ctype.h>
+#include <math.h>
 
+/* Helper to strip leading whitespace */
 static char* ltrim(char *s) {
     while (isspace((unsigned char)*s)) s++;
     return s;
 }
 
+/* Helper to strip trailing whitespace and newline characters */
 static void rtrim(char *s) {
     size_t len = strlen(s);
     while (len > 0 && (isspace((unsigned char)s[len - 1]) || s[len - 1] == '\r' || s[len - 1] == '\n')) {
@@ -18,42 +21,91 @@ static void rtrim(char *s) {
     }
 }
 
+/* Parse a single signal definition line:
+ * SG_ SignalName [M|m0] : start|len@endian_sign (scale,offset) [min|max] "unit" Receiver
+ */
 static bool parse_signal_line(char *line, dbc_signal_t *sig) {
     memset(sig, 0, sizeof(*sig));
     sig->scale = 1.0;
     sig->offset = 0.0;
 
     char *p = ltrim(line);
-    if (strncmp(p, "SG_ ", 4) != 0) return false;
+    if (strncmp(p, "SG_ ", 4) != 0) {
+        return false;
+    }
     p += 4;
     p = ltrim(p);
 
+    /* Read signal name */
     char *name_start = p;
-    while (*p && !isspace((unsigned char)*p) && *p != ':') p++;
+    while (*p && !isspace((unsigned char)*p) && *p != ':') {
+        p++;
+    }
     size_t name_len = (size_t)(p - name_start);
-    if (name_len == 0 || name_len >= sizeof(sig->name)) return false;
+    if (name_len == 0 || name_len >= sizeof(sig->name)) {
+        return false;
+    }
     snprintf(sig->name, sizeof(sig->name), "%.*s", (int)name_len, name_start);
 
+    /* Find colon ':' */
     p = strchr(p, ':');
     if (!p) return false;
-    p++;
+    p++; /* Skip ':' */
     p = ltrim(p);
 
+    /* Parse start|length@endianness sign */
     unsigned int start_bit = 0, bit_len = 0, endian_val = 1;
     char sign_char = '+';
-    if (sscanf(p, "%u|%u@%1u%c", &start_bit, &bit_len, &endian_val, &sign_char) != 4) return false;
+    if (sscanf(p, "%u|%u@%1u%c", &start_bit, &bit_len, &endian_val, &sign_char) != 4) {
+        return false;
+    }
 
     sig->start_bit = (uint8_t)start_bit;
     sig->bit_len = (uint8_t)bit_len;
     sig->endian = (endian_val == 1) ? CAN_ENDIAN_LITTLE : CAN_ENDIAN_BIG;
     sig->sign = (sign_char == '-') ? CAN_SIGN_SIGNED : CAN_SIGN_UNSIGNED;
+
+    /* Parse scale and offset in parentheses (scale,offset) */
+    char *paren = strchr(p, '(');
+    if (paren) {
+        sscanf(paren, "(%lf,%lf)", &sig->scale, &sig->offset);
+    }
+
+    /* Parse [min|max] */
+    char *bracket = strchr(p, '[');
+    if (bracket) {
+        sscanf(bracket, "[%lf|%lf]", &sig->min, &sig->max);
+    }
+
+    /* Parse "unit" in quotes */
+    char *quote1 = strchr(p, '\"');
+    if (quote1) {
+        char *quote2 = strchr(quote1 + 1, '\"');
+        if (quote2) {
+            size_t u_len = (size_t)(quote2 - (quote1 + 1));
+            snprintf(sig->unit, sizeof(sig->unit), "%.*s", (int)u_len, quote1 + 1);
+            p = quote2 + 1;
+            p = ltrim(p);
+            /* Parse receiver nodes if present */
+            if (*p) {
+                snprintf(sig->receiver, sizeof(sig->receiver), "%s", p);
+                rtrim(sig->receiver);
+            }
+        }
+    }
+
     return true;
 }
 
+/* Parse a message definition line:
+ * BO_ ID MessageName: DLC TransmitterNode
+ */
 static bool parse_message_line(char *line, dbc_message_t *msg) {
     memset(msg, 0, sizeof(*msg));
     char *p = ltrim(line);
-    if (strncmp(p, "BO_ ", 4) != 0) return false;
+    if (strncmp(p, "BO_ ", 4) != 0) {
+        return false;
+    }
     p += 4;
     p = ltrim(p);
 
@@ -62,62 +114,154 @@ static bool parse_message_line(char *line, dbc_message_t *msg) {
     unsigned int dlc = 0;
     char transmitter_buf[DBC_MAX_NAME_LEN] = {0};
 
+    /* Scan ID */
     char *endptr = NULL;
     raw_id = (uint32_t)strtoul(p, &endptr, 10);
     if (endptr == p) return false;
     p = ltrim(endptr);
 
+    /* Scan message name up to ':' */
     char *colon = strchr(p, ':');
     if (!colon) return false;
 
     size_t n_len = (size_t)(colon - p);
-    while (n_len > 0 && isspace((unsigned char)p[n_len - 1])) n_len--;
+    /* Trim trailing spaces from name before colon */
+    while (n_len > 0 && isspace((unsigned char)p[n_len - 1])) {
+        n_len--;
+    }
     snprintf(name_buf, sizeof(name_buf), "%.*s", (int)n_len, p);
 
     p = colon + 1;
     p = ltrim(p);
-    if (sscanf(p, "%u %63s", &dlc, transmitter_buf) < 1) return false;
 
+    if (sscanf(p, "%u %63s", &dlc, transmitter_buf) < 1) {
+        return false;
+    }
+
+    /* Mask out extended CAN bit if set in standard DBC format (bit 31) */
     msg->id = (raw_id & 0x80000000U) ? (raw_id & 0x1FFFFFFFU) : (raw_id & 0x7FFU);
     snprintf(msg->name, sizeof(msg->name), "%s", name_buf);
     msg->dlc = (uint8_t)dlc;
     snprintf(msg->transmitter, sizeof(msg->transmitter), "%s", transmitter_buf);
     msg->signal_count = 0;
+
     return true;
 }
 
 dbc_database_t* dbc_load_file(const char *filepath) {
     if (!filepath) return NULL;
+
     FILE *fp = fopen(filepath, "r");
-    if (!fp) return NULL;
+    if (!fp) {
+        return NULL;
+    }
 
     dbc_database_t *db = (dbc_database_t*)calloc(1, sizeof(dbc_database_t));
-    if (!db) { fclose(fp); return NULL; }
+    if (!db) {
+        fclose(fp);
+        return NULL;
+    }
 
     snprintf(db->filepath, sizeof(db->filepath), "%s", filepath);
     db->capacity = 16;
     db->message_count = 0;
     db->messages = (dbc_message_t*)calloc(db->capacity, sizeof(dbc_message_t));
-    if (!db->messages) { free(db); fclose(fp); return NULL; }
+    if (!db->messages) {
+        free(db);
+        fclose(fp);
+        return NULL;
+    }
 
     char line_buffer[1024];
+    dbc_message_t *current_msg = NULL;
+
     while (fgets(line_buffer, sizeof(line_buffer), fp)) {
         char *line = ltrim(line_buffer);
         rtrim(line);
+
+        if (strlen(line) == 0) continue;
+
         if (strncmp(line, "BO_ ", 4) == 0) {
+            /* If capacity full, reallocate */
             if (db->message_count >= db->capacity) {
                 size_t new_cap = db->capacity * 2;
                 dbc_message_t *new_arr = (dbc_message_t*)realloc(db->messages, new_cap * sizeof(dbc_message_t));
-                if (!new_arr) break;
+                if (!new_arr) {
+                    break;
+                }
                 db->messages = new_arr;
                 db->capacity = new_cap;
             }
+
             dbc_message_t parsed_msg;
             if (parse_message_line(line, &parsed_msg)) {
-                db->messages[db->message_count++] = parsed_msg;
+                db->messages[db->message_count] = parsed_msg;
+                current_msg = &db->messages[db->message_count];
+                db->message_count++;
+            } else {
+                current_msg = NULL;
+            }
+        } else if (strncmp(line, "SG_ ", 4) == 0 && current_msg != NULL) {
+            if (current_msg->signal_count < DBC_MAX_SIGNALS_PER_MSG) {
+                dbc_signal_t sig;
+                if (parse_signal_line(line, &sig)) {
+                    current_msg->signals[current_msg->signal_count++] = sig;
+                }
+            }
+        } else if (strncmp(line, "CM_ BO_ ", 8) == 0) {
+            uint32_t cm_id = 0;
+            char *p = line + 8;
+            cm_id = (uint32_t)strtoul(p, &p, 10);
+            char *q1 = strchr(p, '\"');
+            if (q1) {
+                char *q2 = strchr(q1 + 1, '\"');
+                if (q2) {
+                    const dbc_message_t *m = dbc_find_message(db, cm_id);
+                    if (m) {
+                        dbc_message_t *mut_m = (dbc_message_t*)m;
+                        size_t c_len = (size_t)(q2 - (q1 + 1));
+                        snprintf(mut_m->comment, sizeof(mut_m->comment), "%.*s", (int)c_len, q1 + 1);
+                    }
+                }
+            }
+        } else if (strncmp(line, "CM_ SG_ ", 8) == 0) {
+            uint32_t cm_id = 0;
+            char *p = line + 8;
+            cm_id = (uint32_t)strtoul(p, &p, 10);
+            p = ltrim(p);
+            char sig_name[DBC_MAX_NAME_LEN] = {0};
+            if (sscanf(p, "%63s", sig_name) == 1) {
+                char *q1 = strchr(p, '\"');
+                if (q1) {
+                    char *q2 = strchr(q1 + 1, '\"');
+                    if (q2) {
+                        const dbc_message_t *m = dbc_find_message(db, cm_id);
+                        if (m) {
+                            dbc_message_t *mut_m = (dbc_message_t*)m;
+                            for (size_t i = 0; i < mut_m->signal_count; i++) {
+                                if (strcmp(mut_m->signals[i].name, sig_name) == 0) {
+                                    size_t c_len = (size_t)(q2 - (q1 + 1));
+                                    snprintf(mut_m->signals[i].comment, sizeof(mut_m->signals[i].comment), "%.*s", (int)c_len, q1 + 1);
+                                    break;
+                                }
+                            }
+                        }
+                    }
+                }
             }
         }
     }
+
     fclose(fp);
     return db;
 }
+
+void dbc_free(dbc_database_t *db) {
+    if (!db) return;
+    if (db->messages) {
+        free(db->messages);
+        db->messages = NULL;
+    }
+    free(db);
+}
+
