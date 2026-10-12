@@ -348,3 +348,38 @@ int can_bus_read(can_bus_t *bus, can_msg_t *msg, int timeout_ms) {
 #endif
 }
 
+bool can_bus_is_mock(const can_bus_t *bus) {
+    return bus ? bus->is_mock : false;
+}
+
+const char* can_bus_get_interface(const can_bus_t *bus) {
+    return bus ? bus->interface : "unknown";
+}
+
+void can_bus_close(can_bus_t *bus) {
+    if (!bus) return;
+
+#if CAN_HAS_SOCKETCAN
+    if (bus->socket_fd >= 0) {
+        close(bus->socket_fd);
+        bus->socket_fd = -1;
+    }
+#endif
+
+    free(bus);
+}
+
+void can_msg_to_hex_string(const can_msg_t *msg, char *buffer, size_t buf_len) {
+    if (!buffer || buf_len == 0) return;
+    buffer[0] = '\0';
+    if (!msg || msg->dlc == 0) return;
+
+    size_t offset = 0;
+    for (uint8_t i = 0; i < msg->dlc && offset + 3 < buf_len; i++) {
+        int written = snprintf(buffer + offset, buf_len - offset, "%02X%s",
+                               msg->data[i], (i + 1 < msg->dlc) ? " " : "");
+        if (written > 0) {
+            offset += (size_t)written;
+        }
+    }
+}
