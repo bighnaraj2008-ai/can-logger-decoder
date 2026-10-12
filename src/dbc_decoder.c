@@ -339,3 +339,34 @@ double dbc_decode_signal(const dbc_signal_t *sig, const uint8_t *data, uint8_t d
     return physical_value;
 }
 
+int dbc_decode_message(const dbc_message_t *msg_def, const uint8_t *payload, uint8_t dlc, dbc_decoded_message_t *result) {
+    if (!msg_def || !payload || !result) return 0;
+
+    result->message_id = msg_def->id;
+    snprintf(result->message_name, sizeof(result->message_name), "%s", msg_def->name);
+    result->dlc = dlc;
+    result->signal_count = 0;
+
+    for (size_t i = 0; i < msg_def->signal_count && i < DBC_MAX_SIGNALS_PER_MSG; i++) {
+        const dbc_signal_t *sig = &msg_def->signals[i];
+        dbc_decoded_signal_t *out_sig = &result->signals[result->signal_count++];
+
+        snprintf(out_sig->signal_name, sizeof(out_sig->signal_name), "%s", sig->name);
+        snprintf(out_sig->unit, sizeof(out_sig->unit), "%s", sig->unit);
+
+        out_sig->min = sig->min;
+        out_sig->max = sig->max;
+        out_sig->has_range = (sig->min != 0.0 || sig->max != 0.0);
+
+        out_sig->physical_value = dbc_decode_signal(sig, payload, dlc, &out_sig->raw_value);
+
+        if (out_sig->has_range) {
+            out_sig->in_range = (out_sig->physical_value >= sig->min && out_sig->physical_value <= sig->max);
+        } else {
+            out_sig->in_range = true;
+        }
+    }
+
+    return (int)result->signal_count;
+}
+
