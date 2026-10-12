@@ -265,20 +265,77 @@ void dbc_free(dbc_database_t *db) {
     free(db);
 }
 
-
 const dbc_message_t* dbc_find_message(const dbc_database_t *db, uint32_t can_id) {
     if (!db) return NULL;
+
     for (size_t i = 0; i < db->message_count; i++) {
-        if (db->messages[i].id == can_id) return &db->messages[i];
+        if (db->messages[i].id == can_id) {
+            return &db->messages[i];
+        }
     }
     return NULL;
 }
 
-void dbc_print_summary(const dbc_database_t *db) {
-    if (!db) return;
-    printf("\n=== DBC Summary: %s (Messages: %zu) ===\n", db->filepath, db->message_count);
-    for (size_t i = 0; i < db->message_count; i++) {
-        const dbc_message_t *m = &db->messages[i];
-        printf(" [0x%03X] %s (DLC: %u, Signals: %zu)\n", m->id, m->name, m->dlc, m->signal_count);
+double dbc_decode_signal(const dbc_signal_t *sig, const uint8_t *data, uint8_t dlc, int64_t *raw_out) {
+    if (!sig || !data) {
+        if (raw_out) *raw_out = 0;
+        return 0.0;
     }
+
+    uint64_t raw_uint = 0;
+
+    if (sig->endian == CAN_ENDIAN_LITTLE) {
+        /* Standard Intel (Little-Endian) Bit Unpacking */
+        for (uint8_t i = 0; i < sig->bit_len; i++) {
+            uint8_t bit_pos = sig->start_bit + i;
+            uint8_t byte_idx = bit_pos / 8;
+            uint8_t bit_in_byte = bit_pos % 8;
+
+            if (byte_idx < dlc) {
+                uint64_t bit_val = (data[byte_idx] >> bit_in_byte) & 0x01;
+                raw_uint |= (bit_val << i);
+            }
+        }
+    } else {
+        /* Motorola (Big-Endian) Vector Format Bit Unpacking */
+        uint8_t current_bit = sig->start_bit;
+        for (uint8_t i = 0; i < sig->bit_len; i++) {
+            uint8_t byte_idx = current_bit / 8;
+            uint8_t bit_in_byte = current_bit % 8;
+
+            if (byte_idx < dlc) {
+                uint64_t bit_val = (data[byte_idx] >> bit_in_byte) & 0x01;
+                raw_uint = (raw_uint << 1) | bit_val;
+            }
+
+            if (bit_in_byte == 0) {
+                current_bit += 15;
+            } else {
+                current_bit -= 1;
+            }
+        }
+    }
+
+    /* Handle Two's Complement Signed Integers */
+    int64_t raw_int;
+    if (sig->sign == CAN_SIGN_SIGNED && sig->bit_len > 0 && sig->bit_len < 64) {
+        uint64_t sign_bit = ((uint64_t)1) << (sig->bit_len - 1);
+        if (raw_uint & sign_bit) {
+            uint64_t mask = ~(((uint64_t)1 << sig->bit_len) - 1);
+            raw_int = (int64_t)(raw_uint | mask);
+        } else {
+            raw_int = (int64_t)raw_uint;
+        }
+    } else {
+        raw_int = (int64_t)raw_uint;
+    }
+
+    if (raw_out) {
+        *raw_out = raw_int;
+    }
+
+    /* Scaling and offset formula: physical = raw * scale + offset */
+    double physical_value = ((double)raw_int) * sig->scale + sig->offset;
+    return physical_value;
 }
+
