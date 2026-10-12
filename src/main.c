@@ -66,6 +66,17 @@ int main(int argc, char *argv[]) {
         return 1;
     }
     printf("CAN bus active (Mock: %s)\n", can_bus_is_mock(bus) ? "yes" : "no");
+    printf("Initializing CSV log file: %s...\n", csv_file);
+    FILE *csv_fp = fopen(csv_file, "w");
+    if (!csv_fp) {
+        fprintf(stderr, "Cannot open CSV file\n");
+        can_bus_close(bus);
+        dbc_free(dbc_db);
+        return 1;
+    }
+    fprintf(csv_fp, "Timestamp_ISO,Timestamp_Sec,CAN_ID_Hex,CAN_ID_Dec,Message_Name,DLC,Payload_Hex,Signal_Name,Raw_Value,Physical_Value,Unit\n");
+    fflush(csv_fp);
+    fclose(csv_fp);
     can_bus_close(bus);
     dbc_free(dbc_db);
     return 0;
