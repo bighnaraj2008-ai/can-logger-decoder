@@ -55,19 +55,59 @@ When physical hardware or virtual network interfaces are not available (e.g. run
 
 ```text
 can-logger-decoder/
-├── Makefile                # Strict build configuration (-Wall -Wextra -std=gnu99 -O2)
+├── Makefile                # Layered build, cross-platform targets
+├── CMakeLists.txt          # Modern CMake cross-platform configuration
 ├── LICENSE                 # MIT Open Source License
-├── .gitignore              # Ignores binaries, object files, logs, and IDE caches
 ├── README.md               # Detailed technical documentation and tutorial
 ├── sample.dbc              # Automotive DBC database (Engine, Brake, Transmission)
+├── CHANGELOG.md            # Release and refactoring changelog
+├── .clang-format           # Strict C formatting standard
+├── docs/
+│   ├── ARCHITECTURE_REFACTOR.md   # Day 1 refactoring architecture overview
+│   ├── STATE_MACHINE.md           # Error recovery & bus-off FSM reference
+│   ├── PERFORMANCE_TUNING.md      # CAN frame optimization & tuning guide
+│   └── TROUBLESHOOTING.md         # Hardware SPI & virtual socket guide
 ├── include/
-│   ├── can_parser.h        # SocketCAN abstraction & mock frame generator API
-│   └── dbc_decoder.h       # DBC file parsing, bit unpacking, and signal definitions
-└── src/
-    ├── can_parser.c        # SocketCAN socket handling, select() loop, and mock dynamics
-    ├── dbc_decoder.c       # DBC file parser, Intel/Motorola unpacking, sign extension
-    ├── main.c              # CLI loop, ANSI console dashboard, CSV logging, SIGINT handler
-    └── test_decoder.c      # Automated unit test suite verifying math & parsing
+│   ├── can_core.h          # CAN identifiers, DLC limits, frame & message types
+│   ├── mcp2515.h           # MCP2515 SPI register map, commands, modes, timing
+│   ├── vcan_interface.h    # Virtual CAN socket API and frame routing
+│   ├── can_filters.h       # Acceptance filter sets, matching, and routing
+│   ├── error_codes.h       # Canonical can_error_t codes and descriptions
+│   └── dbc_decoder.h       # DBC parsing, bit unpacking, signal definitions
+├── src/
+│   ├── main.c              # CLI loop, ANSI console dashboard, CSV logging
+│   ├── dbc_decoder.c       # DBC file parser, Intel/Motorola unpacking
+│   ├── core/
+│   │   ├── can_parser.c    # Bus handle: SocketCAN binding + mock telemetry
+│   │   ├── can_frame.c     # Frame wire format, validation, checksum utilities
+│   │   ├── dlc_validator.c # Strict DLC bounds checking & CAN FD mapping
+│   │   └── can_router.c    # Bidirectional hardware/vcan frame router
+│   ├── hardware/
+│   │   ├── mcp2515_spi.c       # MCP2515 SPI transport & register model
+│   │   ├── mcp2515_init.c      # Modular hardware initialization sequence
+│   │   ├── mcp2515_interrupt.c # Refined SPI interrupt service dispatcher
+│   │   └── mcp2515_filters.c   # Hardware filter & mask register setup
+│   ├── network/
+│   │   ├── vcan_socket.c   # Virtual socket creation & interface binding
+│   │   └── vcan_listener.c # Efficient frame read loop & polling dispatcher
+│   ├── state/
+│   │   ├── error_machine.c     # Fault-confinement error-recovery FSM
+│   │   └── bus_off_recovery.c  # ISO 11898-1 bus-off recovery controller
+│   └── utils/
+│       ├── logger.c        # Structured multi-level logging framework
+│       ├── crc_check.c     # ISO CAN CRC-15 & frame integrity utilities
+│       └── metrics.c       # Runtime telemetry & frame drop counter tracking
+├── scripts/
+│   ├── run_unit_tests.sh   # Automated test suite runner
+│   ├── benchmark_decoder.sh # Frame throughput benchmark
+│   └── smoke_test.sh       # Pre-flight integration smoke test
+└── tests/
+    ├── test_parser.c       # Core parser, wire format & validation tests
+    ├── test_state_machine.c # Error FSM and bus-off recovery tests
+    ├── test_vcan.c         # Virtual socket interface tests
+    ├── test_filters.c      # MCP2515 hardware filtering tests
+    ├── test_metrics.c      # Decoder telemetry metrics tests
+    └── test_router.c       # Bidirectional frame routing tests
 ```
 
 ---
