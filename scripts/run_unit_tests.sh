@@ -25,6 +25,8 @@ TESTS=(
     "test_filters"
     "test_metrics"
     "test_router"
+    "test_edge_cases"
+    "test_fixtures"
     "test_decoder"
 )
 
