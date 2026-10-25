@@ -1,0 +1,70 @@
+# ==============================================================================
+# CAN Logger & Decoder - Malformed / Corrupted Frame Fixtures
+# File: tests/fixtures/corrupted_frames.hex
+#
+# Format: one wire frame per line as contiguous uppercase hex bytes.
+# Wire layout (classical CAN, self-delimiting via DLC):
+#   [can_id_b3][can_id_b2][can_id_b1][can_id_b0][can_dlc][data byte 0]...[data N-1]
+#   total = 4 + 1 + dlc bytes
+#
+# Lines beginning with '#' are comments describing the injected anomaly and the
+# error code the parser is expected to return (or the resilience property to
+# verify). Blank lines are ignored.
+# ==============================================================================
+
+# 1. Truncated header: only 3 bytes (< 5 minimum) -> CAN_ERR_IO
+000000
+# EXPECT: can_frame_from_wire returns CAN_ERR_IO (truncated frame)
+
+# 2. DLC 9 outside classical [0..8] range -> CAN_ERR_INVALID_DLC
+000000000900
+# EXPECT: can_frame_from_wire returns CAN_ERR_INVALID_DLC
+
+# 3. DLC 15 outside classical [0..8] range (CAN FD code) -> CAN_ERR_INVALID_DLC
+000000000F
+# EXPECT: can_frame_from_wire returns CAN_ERR_INVALID_DLC
+
+# 4. DLC 8 declared but payload truncated (only 1 data byte present, need 8)
+#    wire_len 7 < 5 + 8 -> CAN_ERR_IO
+000000000800
+# EXPECT: can_frame_from_wire returns CAN_ERR_IO (truncated payload)
+
+# 5. Extended frame whose cleaned 29-bit ID exceeds the EFF mask (0x1FFFFFFF).
+#    Raw id = 0xA0000000, cleaned = 0x20000000 > 0x1FFFFFFF.
+#    Wire parses OK, but can_validate_frame_integrity must reject it.
+A000000000
+# EXPECT: wire parse OK; can_validate_frame_integrity returns CAN_ERR_INVALID_ARG
+
+# 6. Standard frame with identifier bits above the 11-bit SFF mask set without
+#    the EFF flag. Raw id = 0x10000100; cleaned = 0x100 (masked) so wire parse
+#    succeeds, but the high flag bits are present -> treat as malformed ID.
+1000010000
+# EXPECT: wire parse OK; can_id_clean strips flags; id == 0x100
+
+# 7. Malicious / malformed payload: all-0xFF bytes with a valid DLC 8.
+#    Parser must accept the frame (valid structure) without crashing and without
+#    reading out of bounds; higher layers should flag the payload as suspicious.
+0000000008FFFFFFFFFFFFFFFF
+# EXPECT: wire parse OK; dlc==8; all payload bytes == 0xFF; no OOB read
+
+# 8. Valid-looking standard frame (id 0x100, dlc 8) with a corrupted trailing
+#    checksum byte. Wire structure is intact; checksum validation must fail.
+00000100081027721F7F82AA00
+# EXPECT: wire parse OK; can_checksum_validate over bytes[0..6] vs byte[7] fails
+
+# 9. Oversized garbage line far exceeding a legal frame (16 bytes, dlc claims 8
+#    but 11 data bytes follow). Parser must stop at dlc and not overrun.
+0000000008DEADBEEFDEADBEEFDEADBEEFDEADBEEF
+# EXPECT: wire parse OK; consumes exactly 4+1+8=13 bytes, ignores trailing bytes
+
+# 10. Zero-length frame: id 0x000, dlc 0 -> valid minimal frame (boundary).
+0000000000
+# EXPECT: wire parse OK; dlc==0; valid minimal frame
+
+# 11. Maximum extended id with dlc 0: raw = 0x9FFFFFFF.
+9FFFFFFF00
+# EXPECT: wire parse OK; extended flag set; cleaned id == 0x1FFFFFFF
+
+# ==============================================================================
+# End of corrupted_frames.hex
+# ==============================================================================
