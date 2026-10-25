@@ -73,7 +73,8 @@ can-logger-decoder/
 │   ├── ARCHITECTURE_REFACTOR.md   # Day 1 refactoring architecture overview
 │   ├── STATE_MACHINE.md           # Error recovery & bus-off FSM reference
 │   ├── PERFORMANCE_TUNING.md      # CAN frame optimization & tuning guide
-│   └── TROUBLESHOOTING.md         # Hardware SPI & virtual socket guide
+│   ├── TROUBLESHOOTING.md         # Hardware SPI & virtual socket guide
+│   └── FIXTURE_GUIDE.md           # Authoring custom binary and hex test fixtures
 ├── include/
 │   ├── can_core.h          # CAN identifiers, DLC limits, frame & message types
 │   ├── mcp2515.h           # MCP2515 SPI register map, commands, modes, timing
