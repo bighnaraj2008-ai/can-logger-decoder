@@ -5,6 +5,48 @@ All notable changes to the `can-logger-decoder` project will be documented in th
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.1.0] - 2026-10-25
+
+### Day 2 Test Coverage & Fixture Validation
+
+#### Added
+- **Automated Test Fixture Catalog (`tests/fixtures/`)**:
+  - `tests/fixtures/raw_frames.bin`: 8 raw self-delimiting CAN wire frames (standard, extended, RTR, error).
+  - `tests/fixtures/corrupted_frames.hex`: 11 hex anomaly frames (DLC out-of-bounds, truncated header, CRC corruption).
+  - `tests/fixtures/extended_frames.bin`: 5 extended 29-bit identifier binary frames (SAE J1939 & UDS diagnostics).
+  - `tests/fixtures/bus_off_sequence.hex`: 10 error escalation vectors triggering ISO 11898-1 bus-off transitions.
+- **Edge-Case & Boundary Unit Test Suites (`tests/edge_cases/`)**:
+  - `tests/edge_cases/test_dlc_mismatch.c`: Classical CAN DLC bounds (0..8), CAN FD mapping, and wire truncation.
+  - `tests/edge_cases/test_invalid_arbitration.c`: 11-bit and 29-bit identifier validation and flag cleansing.
+  - `tests/edge_cases/test_buffer_overflow.c`: Socket and RX ring buffer congestion handling and recovery.
+  - `tests/edge_cases/test_bus_off_trigger.c`: TEC/REC counter thresholds, bus-off trigger, and recovery controller.
+- **Test Harness Drivers & Mock Subsystems (`tests/harness/`)**:
+  - `tests/harness/mock_spi.c` & `mock_spi.h`: Mock SPI communication driver for MCP2515 hardware emulation.
+  - `tests/harness/mock_vcan.c` & `mock_vcan.h`: Mock virtual SocketCAN packet generator and burst simulator.
+  - `tests/harness/assertions.c`: Custom test assertion library with colorized diagnostics and pass rate tracking.
+- **Integration, Performance & Sanitizer Harnesses**:
+  - `tests/performance/test_parser_perf.c`: High-throughput parser benchmark measuring frames/sec and latency.
+  - `tests/stress/test_can_storm.c`: High-frequency CAN storm stress test (50,000 frames) asserting 100% fidelity.
+  - `tests/memory/test_leak_sanitizer.c`: Valgrind / AddressSanitizer heap memory leak safety harness.
+  - `tests/integration/test_mcp2515_loopback.c`: MCP2515 hardware loopback integration test.
+  - `tests/integration/test_vcan_bridge.c`: Physical SPI to virtual socket bridge routing test.
+  - `tests/schema_metadata_tests.c`: Protocol constants and schema metadata validation check.
+  - `src/utils/test_logger.c`: Isolated memory-backed logging subsystem for test runs.
+  - `include/test_config.h`: Centralized test configuration constants and timeouts.
+- **Automation Scripts & Continuous Integration**:
+  - `scripts/run_unit_tests.sh`: Day 2 enhanced automated test runner with assertion parsing and exit codes.
+  - `scripts/generate_test_report.sh`: Markdown test execution report generator script.
+  - `scripts/run_valgrind.sh`: Automated Valgrind memory leak checking script.
+  - `scripts/validate_fixtures.sh`: Automated fixture checksum validation script.
+  - `scripts/clean_test_artifacts.sh`: Test artifact and compiled binary cleaner script.
+  - `.github/workflows/test_coverage.yml`: GitHub Actions workflow for test coverage and memory sanitizers.
+- **Documentation & Examples**:
+  - `docs/TEST_COVERAGE.md`: Comprehensive test coverage specifications, fixture catalog, and edge-case matrix.
+  - `docs/EDGE_CASES.md`: Failure modes, ISO standards, and recovery playbooks.
+  - `docs/FIXTURE_GUIDE.md`: Guide on authoring custom binary and hex test fixtures.
+  - `docs/BENCHMARK_TEMPLATE.md`: Telemetry performance benchmark reporting template.
+  - `examples/custom_fixture_generator.py`: Python utility script to generate custom test fixtures.
+
 ## [2.0.0] - 2026-10-24
 
 ### Day 1 Architectural Refactoring
