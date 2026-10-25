@@ -1,0 +1,36 @@
+# ==============================================================================
+# CAN Bus-Off Trigger & Recovery Test Fixtures
+# ==============================================================================
+# Wire layout: [id_b3][id_b2][id_b1][id_b0][dlc][data...]
+# Simulates cumulative transmit error count (TEC) escalation to bus-off (TEC > 255)
+# followed by controller reset and recovery sequences.
+
+# 1. Normal frame (TEC = 0)
+00000100081027721F7F82AA55
+
+# 2. Bit error event frame (TEC += 8 -> 8)
+2000000100
+
+# 3. Form error frame (TEC += 8 -> 16)
+2000000200
+
+# 4. Stuff error frame (TEC += 8 -> 24)
+2000000400
+
+# 5. Consecutive ACK error sequence crossing warning limit (TEC > 96)
+2000002008FFFFFFFFFFFFFFFF
+
+# 6. CRC error frame entering error passive state (TEC > 127)
+2000000808A5A5A5A5A5A5A5A5
+
+# 7. Heavy bus contention error frame triggering bus-off (TEC > 255)
+20000040080000000000000000
+
+# 8. Bus-off active state indicator (ERR_STATE_BUS_OFF)
+2000008000
+
+# 9. Controller reset initiation (EVT_MANUAL_RESET)
+2000010000
+
+# 10. Bus idle 128 occurrences of 11 consecutive recessive bits (EVT_RESET_COMPLETE)
+2000020000
