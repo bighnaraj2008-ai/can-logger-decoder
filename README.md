@@ -451,6 +451,11 @@ make test
 - Validates DLC bounds (`0..8`), classical CAN FD mappings, and payload truncation.
 - Exercises ISO 11898-1 Bus-Off fault confinement, automatic recovery, and socket buffer overflow recovery.
 
+### Test Runner Troubleshooting
+- **Missing Fixture Files**: If `./scripts/run_unit_tests.sh` aborts with `Missing test fixture`, run `./scripts/validate_fixtures.sh` to confirm checksums or re-generate via `python3 examples/custom_fixture_generator.py`.
+- **Permission Denied on Scripts**: Ensure execution permissions are granted with `chmod +x scripts/*.sh`.
+- **Valgrind Memory Checks**: When debugging memory allocations, execute `./scripts/run_valgrind.sh` to ensure zero memory leaks.
+
 ---
 
 ## Day 1 Refactoring Status & Verification
