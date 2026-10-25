@@ -2,6 +2,8 @@
 # ==============================================================================
 # CAN Logger & Decoder - Automated Test Runner
 # ==============================================================================
+# Ingests test fixtures, builds every test binary, and runs each test suite.
+# ==============================================================================
 set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
@@ -17,6 +19,24 @@ echo -e "${CYAN}   CAN LOGGER & DECODER - AUTOMATED UNIT TEST SUITE RUNNER      
 echo -e "${CYAN}================================================================${NC}"
 
 cd "${ROOT_DIR}"
+
+# --------------------------------------------------------------------------
+# Test fixtures ingested by the harness (relative to repo root).
+# --------------------------------------------------------------------------
+FIXTURE_DIR="tests/fixtures"
+RAW_FRAMES="${FIXTURE_DIR}/raw_frames.bin"
+CORRUPTED_HEX="${FIXTURE_DIR}/corrupted_frames.hex"
+EXTENDED_FRAMES="${FIXTURE_DIR}/extended_frames.bin"
+BUS_OFF_HEX="${FIXTURE_DIR}/bus_off_sequence.hex"
+
+echo -e "\n--> Checking test fixtures..."
+for f in "${RAW_FRAMES}" "${CORRUPTED_HEX}" "${EXTENDED_FRAMES}" "${BUS_OFF_HEX}"; do
+    if [[ ! -f "${f}" ]]; then
+        echo -e "${RED}[FAIL] Missing test fixture: ${f}${NC}"
+        exit 1
+    fi
+done
+echo -e "${GREEN}[OK] Fixtures present and verified.${NC}"
 
 TESTS=(
     "test_parser"
