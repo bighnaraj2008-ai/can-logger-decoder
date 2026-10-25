@@ -1,0 +1,38 @@
+name: Test Coverage & Sanitizers
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  coverage-and-sanitizers:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Install dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y gcc make valgrind lcov
+
+      - name: Build and Run Automated Unit Tests
+        run: |
+          chmod +x scripts/*.sh
+          ./scripts/run_unit_tests.sh
+
+      - name: AddressSanitizer & UndefinedBehaviorSanitizer Checks
+        run: |
+          make clean || true
+          CFLAGS="-fsanitize=address,undefined -g -O1" make test || true
+
+      - name: Generate Markdown Test Report
+        run: |
+          ./scripts/generate_test_report.sh
+
+      - name: Validate Test Fixtures Checksums
+        run: |
+          ./scripts/validate_fixtures.sh || true
