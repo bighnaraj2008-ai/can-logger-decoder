@@ -3,6 +3,7 @@
 [![CI Build](https://img.shields.io/badge/CI-Passing-brightgreen?style=flat-square&logo=githubactions)](.github/workflows/ci.yml)
 [![C Standard](https://img.shields.io/badge/Language-C99%20%2F%20GNU99-blue?style=flat-square&logo=c)](https://en.wikipedia.org/wiki/C99)
 [![Architecture](https://img.shields.io/badge/Architecture-Day%201%20Refactored-success?style=flat-square)](#architecture-overview)
+[![Test Coverage](https://img.shields.io/badge/Coverage-Day%202%20Validated-brightgreen?style=flat-square)](docs/TEST_COVERAGE.md)
 [![Unit Tests](https://img.shields.io/badge/Unit%20Tests-100%25%20Passing%20(6%2F6)-brightgreen?style=flat-square)](tests/)
 [![Code Style](https://img.shields.io/badge/Code%20Style-LLVM%20clang--format-blueviolet?style=flat-square)](.clang-format)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg?style=flat-square)](LICENSE)
