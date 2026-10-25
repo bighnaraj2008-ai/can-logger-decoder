@@ -426,6 +426,30 @@ Expected output:
 
 ---
 
+## Local Test Execution & Automated Suite Runner
+
+The repository features comprehensive automated test suites covering core parsing, fault confinement, hardware filtering, telemetry metrics, virtual socket routing, test fixtures, and edge cases.
+
+### Running All Suites
+
+```bash
+chmod +x scripts/run_unit_tests.sh
+./scripts/run_unit_tests.sh
+```
+
+Or via GNU Make:
+
+```bash
+make test
+```
+
+### Day 2 Test Coverage Highlights
+- Ingests self-delimiting raw binary frames (`tests/fixtures/raw_frames.bin`) and corrupted hex lines (`tests/fixtures/corrupted_frames.hex`).
+- Validates DLC bounds (`0..8`), classical CAN FD mappings, and payload truncation.
+- Exercises ISO 11898-1 Bus-Off fault confinement, automatic recovery, and socket buffer overflow recovery.
+
+---
+
 ## Day 1 Refactoring Status & Verification
 
 | Category | Status | Details |
