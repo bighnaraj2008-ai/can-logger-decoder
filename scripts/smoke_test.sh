@@ -36,6 +36,19 @@ REQUIRED_FILES=(
     "src/utils/logger.c"
     "src/dbc_decoder.c"
     "src/main.c"
+    "tests/fixtures/raw_frames.bin"
+    "tests/fixtures/corrupted_frames.hex"
+    "tests/fixtures/extended_frames.bin"
+    "tests/fixtures/bus_off_sequence.hex"
+    "tests/test_fixtures.h"
+    "tests/test_fixtures.c"
+    "tests/edge_cases/test_dlc_mismatch.c"
+    "tests/edge_cases/test_invalid_arbitration.c"
+    "tests/edge_cases/test_buffer_overflow.c"
+    "tests/edge_cases/test_bus_off_trigger.c"
+    "tests/harness/mock_spi.c"
+    "tests/harness/mock_vcan.c"
+    "tests/harness/assertions.c"
 )
 
 for f in "${REQUIRED_FILES[@]}"; do
