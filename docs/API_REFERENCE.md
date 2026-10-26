@@ -136,3 +136,48 @@ Programs standard/extended hardware mask (`RXM0`, `RXM1`) and filter registers (
 can_error_t mcp2515_service_interrupts(mcp2515_handle_t *handle, can_frame_t *rx_frame, bool *frame_received);
 ```
 Polls `CANINTF` over SPI, fetches pending RX buffers (`RXB0`, `RXB1`), handles overflow / error flags, and clears interrupt bits.
+
+---
+
+## 3. Virtual CAN Socket Network Interface API
+
+The Network Layer encapsulates Linux SocketCAN (`vcan0`, `can0`) operations using Berkeley `AF_CAN` sockets.
+
+### 3.1 Network Structures
+
+#### `vcan_handle_t`
+Encapsulates open socket descriptor and device attributes:
+```c
+typedef struct {
+    int fd;                       /**< Socket file descriptor */
+    char interface_name[16];      /**< e.g., "vcan0", "can0" */
+    bool is_nonblocking;          /**< O_NONBLOCK status */
+    uint32_t rx_buffer_size;      /**< Socket receive buffer size in bytes */
+} vcan_handle_t;
+```
+
+### 3.2 Network Functions
+
+#### `vcan_socket_open`
+```c
+can_error_t vcan_socket_open(vcan_handle_t *handle, const char *interface_name, bool nonblocking);
+```
+Creates `AF_CAN` `SOCK_RAW` socket, sets buffer size, and binds to network interface name via `SIOCGIFINDEX`.
+
+#### `vcan_socket_read`
+```c
+can_error_t vcan_socket_read(vcan_handle_t *handle, can_frame_t *frame);
+```
+Reads a single `struct can_frame` from the socket into internal `can_frame_t`. Returns `CAN_ERR_NO_MESSAGE` if nonblocking and no packet is queued.
+
+#### `vcan_socket_send`
+```c
+can_error_t vcan_socket_send(vcan_handle_t *handle, const can_frame_t *frame);
+```
+Encapsulates frame and transmits onto bus interface.
+
+#### `vcan_socket_close`
+```c
+can_error_t vcan_socket_close(vcan_handle_t *handle);
+```
+Flushes remaining queued buffers and closes the socket descriptor.
