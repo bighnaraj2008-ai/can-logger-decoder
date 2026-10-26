@@ -97,3 +97,48 @@ The transport is pluggable via `mcp2515_spi_ops_t` (see `include/mcp2515.h`),
 so the same driver works with real SPI, a software register model, or the
 mock SPI harness in `tests/harness/mock_spi.*` — no physical CS line required
 during host-based unit tests.
+
+---
+
+## 4. Power Supply & Logic Level Shifting Requirements
+
+Proper electrical power delivery and signal level matching are critical to ensure error-free SPI transactions and CAN transceiver operation.
+
+### 4.1 Operating Voltage Specifications
+
+| Component | Minimum | Typical | Maximum | Notes |
+|:----------|:--------|:--------|:--------|:------|
+| `MCP2515 VDD` | 2.7 V | 5.0 V | 5.5 V | Max SPI clock is limited to 5 MHz below 4.5 V |
+| `MCP2551 VDD` | 4.5 V | 5.0 V | 5.5 V | Standard high-speed transceiver requires 5.0 V |
+| `TJA1050 VDD` | 4.75 V | 5.0 V | 5.25 V | Alternative 5 V transceiver |
+| `SN65HVD230` | 3.0 V | 3.3 V | 3.6 V | 3.3 V native transceiver |
+
+### 4.2 Logic Level Shifting (3.3 V Host to 5 V MCP2515)
+
+When pairing a 5 V MCP2515 module with a 3.3 V host MCU (e.g., ESP32, STM32, Raspberry Pi):
+- **MCP2515 Inputs (`SCK`, `SI/MOSI`, `/CS`)**: While MCP2515 inputs recognize 3.3 V signals as logical HIGH (VIH min is $0.7 \times VDD = 3.5\text{ V}$, but typically works at 3.3 V), bidirectional or unidirectional logic level shifters (e.g., 74LVC245 or BSS138 FET-based converters) are strongly recommended for industrial stability.
+- **MCP2515 Output (`SO/MISO`)**: MCP2515 outputs 5 V on `SO` when powered from 5 V. Driving a 5 V `SO` into a non-5V-tolerant 3.3 V GPIO will damage the host controller. Use a fast logic level shifter or a resistive voltage divider ($1\text{ k}\Omega / 2\text{ k}\Omega$).
+- **Dual-Voltage Modules**: Many modern breakout boards operate the MCP2515 at 3.3 V logic while powering the transceiver at 5.0 V. Verify your module schematic.
+
+### 4.3 Decoupling & Power Sequencing
+
+- Place a **0.1 µF (100 nF) ceramic decoupling capacitor** directly across `VDD` and `VSS` (pins 6 and 7 of MCP2515) within 5 mm of the IC pins.
+- Place a **10 µF tantalum or low-ESR electrolytic capacitor** across the module power rail.
+- Ensure power sequencing stabilizes `VDD` before releasing `/RESET` from ground.
+
+---
+
+## 5. Crystal / Oscillator Selection & Bit-Timing Calculations
+
+The MCP2515 derives all internal bit-timing time quanta ($TQ$) from an external crystal oscillator connected across `OSC1` and `OSC2`.
+
+| Parameter | 8.000 MHz Crystal | 16.000 MHz Crystal |
+|:----------|:------------------|:-------------------|
+| Common modules | NiRen, standard blue boards | Industrial Arduino CAN shields |
+| `F_OSC` | 8,000,000 Hz | 16,000,000 Hz |
+| `T_OSC` | 125 ns | 62.5 ns |
+| Minimum $TQ$ ($BRP=0$) | $2 \times T_{OSC} = 250\text{ ns}$ | $2 \times T_{OSC} = 125\text{ ns}$ |
+| Max CAN Bitrate | 1 Mbps (at 8 TQ/bit) | 1 Mbps (at 16 TQ/bit) |
+| Configuration Header | `#define MCP2515_DEFAULT_OSC_HZ 8000000UL` | `#define MCP2515_DEFAULT_OSC_HZ 16000000UL` |
+
+> **Critical Warning:** Setting `mcp2515_set_bitrate()` with an oscillator frequency assumption that does not match the fitted crystal will cause an immediate $2\times$ baud mismatch, resulting in transmission error counter (`TEC`) spikes and immediate transition to `BUS_OFF`.
