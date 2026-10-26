@@ -1,8 +1,9 @@
-# CAN Bus Logger & Signal Decoder (`can-logger-decoder`)
+﻿# CAN Bus Logger & Signal Decoder (`can-logger-decoder`)
 
 [![CI Build](https://img.shields.io/badge/CI-Passing-brightgreen?style=flat-square&logo=githubactions)](.github/workflows/ci.yml)
 [![C Standard](https://img.shields.io/badge/Language-C99%20%2F%20GNU99-blue?style=flat-square&logo=c)](https://en.wikipedia.org/wiki/C99)
-[![Architecture](https://img.shields.io/badge/Architecture-Day%201%20Refactored-success?style=flat-square)](#architecture-overview)
+[![Architecture](https://img.shields.io/badge/Architecture-Day%203-success?style=flat-square)](docs/ARCHITECTURE.mmd)
+[![Documentation](https://img.shields.io/badge/Docs-Day%203%20Sprint-blue?style=flat-square)](docs/)
 [![Test Coverage](https://img.shields.io/badge/Coverage-Day%202%20Validated-brightgreen?style=flat-square)](docs/TEST_COVERAGE.md)
 [![Unit Tests](https://img.shields.io/badge/Unit%20Tests-100%25%20Passing%20(6%2F6)-brightgreen?style=flat-square)](tests/)
 [![Code Style](https://img.shields.io/badge/Code%20Style-LLVM%20clang--format-blueviolet?style=flat-square)](.clang-format)
@@ -19,42 +20,42 @@ When physical hardware or virtual network interfaces are not available (e.g. run
 ## Architecture Overview
 
 ```
-                      ┌──────────────────────────────────────┐
-                      │        CAN Bus Input Sources         │
-                      └──────────────────┬───────────────────┘
-                                         │
-                 ┌───────────────────────┴───────────────────────┐
-                 │                                               │
+                      â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
+                      â”‚        CAN Bus Input Sources         â”‚
+                      â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¬â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜
+                                         â”‚
+                 â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”´â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
+                 â”‚                                               â”‚
        [ Real Linux SocketCAN ]                        [ Mock Telemetry Engine ]
         - Physical: can0, can1                          - Dynamic vehicle physics
         - Virtual:  vcan0, vcan1                        - Cycles standard messages
         - Kernel sys/socket & linux/can                 - High-fidelity bit packing
-                 │                                               │
-                 └───────────────────────┬───────────────────────┘
-                                         │
-                                         ▼
-                      ┌──────────────────────────────────────┐
-                      │    Raw Frame Ingestion (can_parser)   │
-                      │  - ID masking (11-bit SFF / 29-bit EFF)│
-                      │  - Monotonic & ISO-8601 timestamps    │
-                      └──────────────────┬───────────────────┘
-                                         │
-                                         ▼
-                      ┌──────────────────────────────────────┐
-                      │   DBC Signal Decoder (dbc_decoder)   │
-                      │  - Parser: BO_ (msg) & SG_ (signals) │
-                      │  - Intel (Little) & Motorola (Big)    │
-                      │  - Signed 2's Complement Unpacking   │
-                      │  - Formula: Val = Raw * Scale + Off   │
-                      └──────────────────┬───────────────────┘
-                                         │
-                         ┌───────────────┴───────────────┐
-                         ▼                               ▼
-            ┌─────────────────────────┐     ┌─────────────────────────┐
-            │ Live Terminal Dashboard │     │  Structured CSV Logger  │
-            │  - Colorized ANSI gauges│     │  - can_log.csv          │
-            │  - Out-of-bounds alerts │     │  - Microsecond precision│
-            └─────────────────────────┘     └─────────────────────────┘
+                 â”‚                                               â”‚
+                 â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¬â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜
+                                         â”‚
+                                         â–¼
+                      â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
+                      â”‚    Raw Frame Ingestion (can_parser)   â”‚
+                      â”‚  - ID masking (11-bit SFF / 29-bit EFF)â”‚
+                      â”‚  - Monotonic & ISO-8601 timestamps    â”‚
+                      â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¬â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜
+                                         â”‚
+                                         â–¼
+                      â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
+                      â”‚   DBC Signal Decoder (dbc_decoder)   â”‚
+                      â”‚  - Parser: BO_ (msg) & SG_ (signals) â”‚
+                      â”‚  - Intel (Little) & Motorola (Big)    â”‚
+                      â”‚  - Signed 2's Complement Unpacking   â”‚
+                      â”‚  - Formula: Val = Raw * Scale + Off   â”‚
+                      â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¬â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜
+                                         â”‚
+                         â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”´â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
+                         â–¼                               â–¼
+            â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”     â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
+            â”‚ Live Terminal Dashboard â”‚     â”‚  Structured CSV Logger  â”‚
+            â”‚  - Colorized ANSI gaugesâ”‚     â”‚  - can_log.csv          â”‚
+            â”‚  - Out-of-bounds alerts â”‚     â”‚  - Microsecond precisionâ”‚
+            â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜     â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜
 ```
 
 ---
@@ -63,61 +64,61 @@ When physical hardware or virtual network interfaces are not available (e.g. run
 
 ```text
 can-logger-decoder/
-├── Makefile                # Layered build, cross-platform targets
-├── CMakeLists.txt          # Modern CMake cross-platform configuration
-├── LICENSE                 # MIT Open Source License
-├── README.md               # Detailed technical documentation and tutorial
-├── sample.dbc              # Automotive DBC database (Engine, Brake, Transmission)
-├── CHANGELOG.md            # Release and refactoring changelog
-├── .clang-format           # Strict C formatting standard
-├── docs/
-│   ├── ARCHITECTURE_REFACTOR.md   # Day 1 refactoring architecture overview
-│   ├── STATE_MACHINE.md           # Error recovery & bus-off FSM reference
-│   ├── PERFORMANCE_TUNING.md      # CAN frame optimization & tuning guide
-│   ├── TROUBLESHOOTING.md         # Hardware SPI & virtual socket guide
-│   ├── FIXTURE_GUIDE.md           # Authoring custom binary and hex test fixtures
-│   └── BENCHMARK_TEMPLATE.md      # Test execution telemetry benchmark template
-├── include/
-│   ├── can_core.h          # CAN identifiers, DLC limits, frame & message types
-│   ├── mcp2515.h           # MCP2515 SPI register map, commands, modes, timing
-│   ├── vcan_interface.h    # Virtual CAN socket API and frame routing
-│   ├── can_filters.h       # Acceptance filter sets, matching, and routing
-│   ├── error_codes.h       # Canonical can_error_t codes and descriptions
-│   └── dbc_decoder.h       # DBC parsing, bit unpacking, signal definitions
-├── src/
-│   ├── main.c              # CLI loop, ANSI console dashboard, CSV logging
-│   ├── dbc_decoder.c       # DBC file parser, Intel/Motorola unpacking
-│   ├── core/
-│   │   ├── can_parser.c    # Bus handle: SocketCAN binding + mock telemetry
-│   │   ├── can_frame.c     # Frame wire format, validation, checksum utilities
-│   │   ├── dlc_validator.c # Strict DLC bounds checking & CAN FD mapping
-│   │   └── can_router.c    # Bidirectional hardware/vcan frame router
-│   ├── hardware/
-│   │   ├── mcp2515_spi.c       # MCP2515 SPI transport & register model
-│   │   ├── mcp2515_init.c      # Modular hardware initialization sequence
-│   │   ├── mcp2515_interrupt.c # Refined SPI interrupt service dispatcher
-│   │   └── mcp2515_filters.c   # Hardware filter & mask register setup
-│   ├── network/
-│   │   ├── vcan_socket.c   # Virtual socket creation & interface binding
-│   │   └── vcan_listener.c # Efficient frame read loop & polling dispatcher
-│   ├── state/
-│   │   ├── error_machine.c     # Fault-confinement error-recovery FSM
-│   │   └── bus_off_recovery.c  # ISO 11898-1 bus-off recovery controller
-│   └── utils/
-│       ├── logger.c        # Structured multi-level logging framework
-│       ├── crc_check.c     # ISO CAN CRC-15 & frame integrity utilities
-│       └── metrics.c       # Runtime telemetry & frame drop counter tracking
-├── scripts/
-│   ├── run_unit_tests.sh   # Automated test suite runner
-│   ├── benchmark_decoder.sh # Frame throughput benchmark
-│   └── smoke_test.sh       # Pre-flight integration smoke test
-└── tests/
-    ├── test_parser.c       # Core parser, wire format & validation tests
-    ├── test_state_machine.c # Error FSM and bus-off recovery tests
-    ├── test_vcan.c         # Virtual socket interface tests
-    ├── test_filters.c      # MCP2515 hardware filtering tests
-    ├── test_metrics.c      # Decoder telemetry metrics tests
-    └── test_router.c       # Bidirectional frame routing tests
+â”œâ”€â”€ Makefile                # Layered build, cross-platform targets
+â”œâ”€â”€ CMakeLists.txt          # Modern CMake cross-platform configuration
+â”œâ”€â”€ LICENSE                 # MIT Open Source License
+â”œâ”€â”€ README.md               # Detailed technical documentation and tutorial
+â”œâ”€â”€ sample.dbc              # Automotive DBC database (Engine, Brake, Transmission)
+â”œâ”€â”€ CHANGELOG.md            # Release and refactoring changelog
+â”œâ”€â”€ .clang-format           # Strict C formatting standard
+â”œâ”€â”€ docs/
+â”‚   â”œâ”€â”€ ARCHITECTURE_REFACTOR.md   # Day 1 refactoring architecture overview
+â”‚   â”œâ”€â”€ STATE_MACHINE.md           # Error recovery & bus-off FSM reference
+â”‚   â”œâ”€â”€ PERFORMANCE_TUNING.md      # CAN frame optimization & tuning guide
+â”‚   â”œâ”€â”€ TROUBLESHOOTING.md         # Hardware SPI & virtual socket guide
+â”‚   â”œâ”€â”€ FIXTURE_GUIDE.md           # Authoring custom binary and hex test fixtures
+â”‚   â””â”€â”€ BENCHMARK_TEMPLATE.md      # Test execution telemetry benchmark template
+â”œâ”€â”€ include/
+â”‚   â”œâ”€â”€ can_core.h          # CAN identifiers, DLC limits, frame & message types
+â”‚   â”œâ”€â”€ mcp2515.h           # MCP2515 SPI register map, commands, modes, timing
+â”‚   â”œâ”€â”€ vcan_interface.h    # Virtual CAN socket API and frame routing
+â”‚   â”œâ”€â”€ can_filters.h       # Acceptance filter sets, matching, and routing
+â”‚   â”œâ”€â”€ error_codes.h       # Canonical can_error_t codes and descriptions
+â”‚   â””â”€â”€ dbc_decoder.h       # DBC parsing, bit unpacking, signal definitions
+â”œâ”€â”€ src/
+â”‚   â”œâ”€â”€ main.c              # CLI loop, ANSI console dashboard, CSV logging
+â”‚   â”œâ”€â”€ dbc_decoder.c       # DBC file parser, Intel/Motorola unpacking
+â”‚   â”œâ”€â”€ core/
+â”‚   â”‚   â”œâ”€â”€ can_parser.c    # Bus handle: SocketCAN binding + mock telemetry
+â”‚   â”‚   â”œâ”€â”€ can_frame.c     # Frame wire format, validation, checksum utilities
+â”‚   â”‚   â”œâ”€â”€ dlc_validator.c # Strict DLC bounds checking & CAN FD mapping
+â”‚   â”‚   â””â”€â”€ can_router.c    # Bidirectional hardware/vcan frame router
+â”‚   â”œâ”€â”€ hardware/
+â”‚   â”‚   â”œâ”€â”€ mcp2515_spi.c       # MCP2515 SPI transport & register model
+â”‚   â”‚   â”œâ”€â”€ mcp2515_init.c      # Modular hardware initialization sequence
+â”‚   â”‚   â”œâ”€â”€ mcp2515_interrupt.c # Refined SPI interrupt service dispatcher
+â”‚   â”‚   â””â”€â”€ mcp2515_filters.c   # Hardware filter & mask register setup
+â”‚   â”œâ”€â”€ network/
+â”‚   â”‚   â”œâ”€â”€ vcan_socket.c   # Virtual socket creation & interface binding
+â”‚   â”‚   â””â”€â”€ vcan_listener.c # Efficient frame read loop & polling dispatcher
+â”‚   â”œâ”€â”€ state/
+â”‚   â”‚   â”œâ”€â”€ error_machine.c     # Fault-confinement error-recovery FSM
+â”‚   â”‚   â””â”€â”€ bus_off_recovery.c  # ISO 11898-1 bus-off recovery controller
+â”‚   â””â”€â”€ utils/
+â”‚       â”œâ”€â”€ logger.c        # Structured multi-level logging framework
+â”‚       â”œâ”€â”€ crc_check.c     # ISO CAN CRC-15 & frame integrity utilities
+â”‚       â””â”€â”€ metrics.c       # Runtime telemetry & frame drop counter tracking
+â”œâ”€â”€ scripts/
+â”‚   â”œâ”€â”€ run_unit_tests.sh   # Automated test suite runner
+â”‚   â”œâ”€â”€ benchmark_decoder.sh # Frame throughput benchmark
+â”‚   â””â”€â”€ smoke_test.sh       # Pre-flight integration smoke test
+â””â”€â”€ tests/
+    â”œâ”€â”€ test_parser.c       # Core parser, wire format & validation tests
+    â”œâ”€â”€ test_state_machine.c # Error FSM and bus-off recovery tests
+    â”œâ”€â”€ test_vcan.c         # Virtual socket interface tests
+    â”œâ”€â”€ test_filters.c      # MCP2515 hardware filtering tests
+    â”œâ”€â”€ test_metrics.c      # Decoder telemetry metrics tests
+    â””â”€â”€ test_router.c       # Bidirectional frame routing tests
 ```
 
 ---
@@ -135,7 +136,7 @@ can-logger-decoder/
      - Engine RPM dynamic curves (800 - 4500 RPM)
      - Vehicle Speed correlating with gear ratio (0 - 140 km/h)
      - Throttle position, Coolant temperature thermal warm-up, Oil temperature
-     - Alternator battery voltage ripple (14.1V ± 0.15V)
+     - Alternator battery voltage ripple (14.1V Â± 0.15V)
      - Brake application hydraulic pressures and gear shifting
    - Can also be forced anytime via the `--mock` CLI flag.
 
@@ -222,14 +223,14 @@ Open a second terminal and transmit standard CAN frames using `cansend`:
 - Engine RPM = 2500 rpm (`raw = 10000 = 0x2710`) -> Bytes `10 27`
 - Vehicle Speed = 80.50 km/h (`raw = 8050 = 0x1F72`) -> Bytes `72 1F`
 - Throttle Position = 50.0 % (`raw = 127 = 0x7F`) -> Byte `7F`
-- Engine Oil Temp = 90.0 °C (`raw = 130 = 0x82`) -> Byte `82`
+- Engine Oil Temp = 90.0 Â°C (`raw = 130 = 0x82`) -> Byte `82`
 
 ```bash
 cansend vcan0 100#1027721F7F820000
 ```
 
 #### Example 2: Engine Status (`0x101` / 257)
-- Coolant Temp = 88 °C (`raw = 88 - (-40) = 128 = 0x80`) -> Byte `80`
+- Coolant Temp = 88 Â°C (`raw = 88 - (-40) = 128 = 0x80`) -> Byte `80`
 - Fuel Pressure = 380 kPa (`raw = 380 / 4 = 95 = 0x5F`) -> Byte `5F`
 - Engine Running & MIL Off -> Byte `01`
 - Battery Voltage = 14.1 V (`raw = 14.1 / 0.1 = 141 = 0x8D`) -> Byte `8D`
@@ -336,17 +337,17 @@ Options:
 
 ```text
 [2026-10-12T17:50:12.450Z] 0x100 (256) Engine_Data        DLC:8 [10 27 72 1F 7F 82 AA 55]
-  ├── EngineRPM              :    2500.00 rpm    (raw: 10000 ) [OK]
-  ├── VehicleSpeed           :      80.50 km/h   (raw: 8050  ) [OK]
-  ├── ThrottlePosition       :      49.80 %      (raw: 127   ) [OK]
-  └── EngineOilTemp          :      90.00 degC   (raw: 130   ) [OK]
+  â”œâ”€â”€ EngineRPM              :    2500.00 rpm    (raw: 10000 ) [OK]
+  â”œâ”€â”€ VehicleSpeed           :      80.50 km/h   (raw: 8050  ) [OK]
+  â”œâ”€â”€ ThrottlePosition       :      49.80 %      (raw: 127   ) [OK]
+  â””â”€â”€ EngineOilTemp          :      90.00 degC   (raw: 130   ) [OK]
 
 [2026-10-12T17:50:12.550Z] 0x101 (257) Engine_Status      DLC:8 [80 5F 01 8D 00 00 00 00]
-  ├── CoolantTemperature     :      88.00 degC   (raw: 128   ) [OK]
-  ├── FuelPressure           :     380.00 kPa    (raw: 95    ) [OK]
-  ├── EngineStatus           :       1.00        (raw: 1     ) [OK]
-  ├── CheckEngineLight       :       0.00        (raw: 0     ) [OK]
-  └── BatteryVoltage         :      14.10 V      (raw: 141   ) [OK]
+  â”œâ”€â”€ CoolantTemperature     :      88.00 degC   (raw: 128   ) [OK]
+  â”œâ”€â”€ FuelPressure           :     380.00 kPa    (raw: 95    ) [OK]
+  â”œâ”€â”€ EngineStatus           :       1.00        (raw: 1     ) [OK]
+  â”œâ”€â”€ CheckEngineLight       :       0.00        (raw: 0     ) [OK]
+  â””â”€â”€ BatteryVoltage         :      14.10 V      (raw: 141   ) [OK]
 ```
 
 ### 2. CSV Telemetry Log Schema (`can_log.csv`)
@@ -491,3 +492,4 @@ This project is licensed under the terms of the [MIT License](LICENSE).
 <!-- Day 1 Refactoring: 40 Atomic Commits Completed Cleanly (October 24, 2026) -->
 <!-- Day 2 Test Coverage: 45 Atomic Commits Completed Cleanly (October 25, 2026) -->
 <!-- Verification: 100% Unit Test Pass, Zero Defect Security Audit Gate Approved -->
+
