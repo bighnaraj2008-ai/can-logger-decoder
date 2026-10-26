@@ -74,3 +74,65 @@ Strips `CAN_EFF_FLAG`, `CAN_RTR_FLAG`, and `CAN_ERR_FLAG` bits, returning the pu
 bool can_checksum_validate(const can_frame_t *frame);
 ```
 Calculates CRC-8 over bytes 0–6 and verifies against byte 7 for 8-byte frames.
+
+---
+
+## 2. MCP2515 Hardware Driver API
+
+The Hardware Layer abstracts physical SPI communications with the Microchip MCP2515 stand-alone CAN controller.
+
+### 2.1 Hardware Structures & Types
+
+#### `mcp2515_spi_ops_t`
+Abstracts low-level SPI bus transfer primitives:
+```c
+typedef struct {
+    int (*spi_transfer)(const uint8_t *tx_buf, uint8_t *rx_buf, size_t len, void *user_data);
+    void (*cs_select)(bool select, void *user_data);
+    void *user_data;
+} mcp2515_spi_ops_t;
+```
+
+#### `mcp2515_mode_t`
+Controller operational states:
+```c
+typedef enum {
+    MCP_MODE_NORMAL     = 0x00,
+    MCP_MODE_SLEEP      = 0x20,
+    MCP_MODE_LOOPBACK   = 0x40,
+    MCP_MODE_LISTENONLY = 0x60,
+    MCP_MODE_CONFIG     = 0x80
+} mcp2515_mode_t;
+```
+
+### 2.2 Hardware Functions
+
+#### `mcp2515_hw_init`
+```c
+can_error_t mcp2515_hw_init(mcp2515_handle_t *handle, const mcp2515_spi_ops_t *ops, uint32_t osc_freq_hz);
+```
+Performs software reset, validates SPI connectivity via dummy read, and places device into `MCP_MODE_CONFIG`.
+
+#### `mcp2515_set_bitrate`
+```c
+can_error_t mcp2515_set_bitrate(mcp2515_handle_t *handle, uint32_t bitrate_bps);
+```
+Computes and programs `CNF1`, `CNF2`, and `CNF3` timing registers based on crystal frequency. Supported bitrates: 125 kbps, 250 kbps, 500 kbps, 1 Mbps.
+
+#### `mcp2515_set_mode`
+```c
+can_error_t mcp2515_set_mode(mcp2515_handle_t *handle, mcp2515_mode_t mode);
+```
+Requests state change and polls `CANSTAT` until mode change is verified.
+
+#### `mcp2515_configure_acceptance_filters`
+```c
+can_error_t mcp2515_configure_acceptance_filters(mcp2515_handle_t *handle, const can_filter_set_t *filters);
+```
+Programs standard/extended hardware mask (`RXM0`, `RXM1`) and filter registers (`RXF0` through `RXF5`).
+
+#### `mcp2515_service_interrupts`
+```c
+can_error_t mcp2515_service_interrupts(mcp2515_handle_t *handle, can_frame_t *rx_frame, bool *frame_received);
+```
+Polls `CANINTF` over SPI, fetches pending RX buffers (`RXB0`, `RXB1`), handles overflow / error flags, and clears interrupt bits.
