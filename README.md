@@ -192,6 +192,21 @@ See **`docs/HARDWARE_SETUP.md`** for the complete hardware specification, includ
 
 ---
 
+## Protocol & Decoder Specification
+
+See **`docs/PROTOCOL_SPEC.md`** for the complete protocol specification, including:
+
+- CAN 2.0A standard (11-bit) vs CAN 2.0B extended (29-bit) identifier structures
+- Linux SocketCAN flag bits (`CAN_EFF_FLAG`, `CAN_RTR_FLAG`, `CAN_ERR_FLAG`)
+- Classical CAN frame wire layout (SOF, arbitration, control, data, CRC-15, ACK, EOF, IFS)
+- Remote Transmission Request (RTR) frames and error frames
+- Data Length Code (DLC) rules (0–8 bytes) and validation helpers
+- Payload parsing: Intel little-endian vs Motorola big-endian bit unpackers
+- Mathematical DBC signal decoding: `Physical Value = (Raw × Scale) + Offset`
+- CRC-15 (ISO 11898-1) and internal simulation CRC-8 payload validation
+
+---
+
 ## Prerequisites & Compilation
 
 ### Requirements
@@ -527,6 +542,7 @@ This project is licensed under the terms of the [MIT License](LICENSE).
 <!-- Day 1 Refactoring: 40 Atomic Commits Completed Cleanly (October 24, 2026) -->
 <!-- Day 2 Test Coverage: 45 Atomic Commits Completed Cleanly (October 25, 2026) -->
 <!-- Verification: 100% Unit Test Pass, Zero Defect Security Audit Gate Approved -->
+
 
 
 
