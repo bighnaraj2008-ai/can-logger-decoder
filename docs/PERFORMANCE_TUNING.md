@@ -1,4 +1,6 @@
-# CAN Frame Processing Optimization & Performance Tuning Guide
+﻿# CAN Frame Processing Optimization & Performance Tuning Guide
+
+`can-logger-decoder` v2.0.0 · Day 3 Performance Guide
 
 This document details optimization strategies, latency minimization techniques, and system tuning guidelines for high-throughput automotive telemetry decoding with `can-logger-decoder`.
 
@@ -46,7 +48,7 @@ The Microchip MCP2515 is interfaced via SPI. At 10 MHz SPI clock, reading one CA
 
 ---
 
-## 3. Zero-Copy Decoding Pipeline
+## 3. Zero-Copy Decoding Pipeline & Memory Optimization
 
 ### Cache Alignment
 All `can_frame_t` structures are aligned to 64-bit boundaries. Ensure decoding structs do not introduce padding penalties.
@@ -58,7 +60,21 @@ For Intel (standard little-endian) and Motorola (big-endian) signals:
 
 ---
 
-## 4. Benchmark Performance Target
+## 4. Real-Time Scheduling & CPU Affinity
+
+In mission-critical automotive logging, priority inversion can cause telemetry packet drops during heavy background I/O:
+
+```bash
+# Assign real-time FIFO priority to the decoder process
+sudo chrt -f 80 ./can_decoder -i can0 -o /var/log/can.csv -q
+
+# Pin decoder thread to an isolated CPU core (e.g. CPU Core 3)
+taskset -c 3 ./can_decoder -i can0 -o /var/log/can.csv -q
+```
+
+---
+
+## 5. Benchmark Performance Targets & Day 3 Cross-Reference
 
 | Metric | Target | Measured |
 | :--- | :--- | :--- |
@@ -66,3 +82,5 @@ For Intel (standard little-endian) and Motorola (big-endian) signals:
 | Max frame throughput | > 100,000 fps | **162,000 fps** |
 | Memory footprint (RSS) | < 8 MB | **3.2 MB** |
 | Frame drop rate at 50k burst | 0.00% | **0.00%** |
+
+For comprehensive multi-baud latency and stress testing results, see **`docs/BENCHMARK_REPORT.md`**.
