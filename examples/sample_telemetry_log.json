@@ -1,0 +1,112 @@
+﻿{
+  "metadata": {
+    "generator": "can-logger-decoder v2.0.0",
+    "timestamp_export": "2026-10-26T12:00:00.000Z",
+    "dbc_database": "sample.dbc",
+    "bus_interface": "vcan0",
+    "bitrate": 500000,
+    "bus_state": "NORMAL"
+  },
+  "telemetry_frames": [
+    {
+      "sequence_id": 1,
+      "timestamp_iso": "2026-10-26T12:00:00.100Z",
+      "timestamp_monotonic_sec": 12450.312984,
+      "can_id_hex": "0x100",
+      "can_id_dec": 256,
+      "frame_format": "STANDARD_11BIT",
+      "message_name": "Engine_Data",
+      "dlc": 8,
+      "payload_hex": "10 27 72 1F 7F 82 AA 55",
+      "checksum_valid": true,
+      "signals": [
+        {
+          "name": "EngineRPM",
+          "raw_value": 10000,
+          "physical_value": 2500.0,
+          "unit": "rpm",
+          "min": 0.0,
+          "max": 16383.75,
+          "in_range": true
+        },
+        {
+          "name": "VehicleSpeed",
+          "raw_value": 8050,
+          "physical_value": 80.5,
+          "unit": "km/h",
+          "min": 0.0,
+          "max": 250.0,
+          "in_range": true
+        },
+        {
+          "name": "ThrottlePosition",
+          "raw_value": 127,
+          "physical_value": 49.8,
+          "unit": "%",
+          "min": 0.0,
+          "max": 100.0,
+          "in_range": true
+        },
+        {
+          "name": "EngineOilTemp",
+          "raw_value": 130,
+          "physical_value": 90.0,
+          "unit": "degC",
+          "min": -40.0,
+          "max": 215.0,
+          "in_range": true
+        }
+      ]
+    },
+    {
+      "sequence_id": 2,
+      "timestamp_iso": "2026-10-26T12:00:00.200Z",
+      "timestamp_monotonic_sec": 12450.413012,
+      "can_id_hex": "0x101",
+      "can_id_dec": 257,
+      "frame_format": "STANDARD_11BIT",
+      "message_name": "Engine_Status",
+      "dlc": 8,
+      "payload_hex": "80 5F 01 8D 00 00 00 00",
+      "checksum_valid": true,
+      "signals": [
+        {
+          "name": "CoolantTemperature",
+          "raw_value": 128,
+          "physical_value": 88.0,
+          "unit": "degC",
+          "min": -40.0,
+          "max": 215.0,
+          "in_range": true
+        },
+        {
+          "name": "FuelPressure",
+          "raw_value": 95,
+          "physical_value": 380.0,
+          "unit": "kPa",
+          "min": 0.0,
+          "max": 1000.0,
+          "in_range": true
+        },
+        {
+          "name": "EngineStatus",
+          "raw_value": 1,
+          "physical_value": 1.0,
+          "unit": "state",
+          "min": 0.0,
+          "max": 3.0,
+          "in_range": true
+        },
+        {
+          "name": "BatteryVoltage",
+          "raw_value": 141,
+          "physical_value": 14.1,
+          "unit": "V",
+          "min": 0.0,
+          "max": 25.5,
+          "in_range": true
+        }
+      ]
+    }
+  ]
+}
