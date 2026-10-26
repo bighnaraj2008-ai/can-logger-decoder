@@ -571,6 +571,12 @@ For operational issues, refer to dedicated playbooks:
 
 ---
 
+## Version Migration
+
+Upgrading from v1.x? See **`docs/MIGRATION_V2.md`** for detailed instructions on updating header includes, handling `can_error_t` return codes, configuring new acceptance filters, and adapting to the modular directory structure.
+
+---
+
 ## Contributing
 
 Contributions are welcome! Please review our guidelines before submitting pull requests:
@@ -589,6 +595,7 @@ See the [LICENSE](LICENSE) file for complete details and copyright permissions.
 <!-- Day 1 Refactoring: 40 Atomic Commits Completed Cleanly (October 24, 2026) -->
 <!-- Day 2 Test Coverage: 45 Atomic Commits Completed Cleanly (October 25, 2026) -->
 <!-- Verification: 100% Unit Test Pass, Zero Defect Security Audit Gate Approved -->
+
 
 
 
