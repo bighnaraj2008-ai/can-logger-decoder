@@ -1,0 +1,33 @@
+﻿name: Documentation Integrity & Link Check
+
+on:
+  push:
+    branches: [ main ]
+    paths:
+      - 'docs/**'
+      - '*.md'
+      - 'scripts/validate_docs.py'
+      - '.github/workflows/docs_check.yml'
+  pull_request:
+    branches: [ main ]
+    paths:
+      - 'docs/**'
+      - '*.md'
+      - 'scripts/validate_docs.py'
+      - '.github/workflows/docs_check.yml'
+
+jobs:
+  validate-docs:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.10'
+
+      - name: Run Documentation Link Validator
+        run: |
+          python3 scripts/validate_docs.py
