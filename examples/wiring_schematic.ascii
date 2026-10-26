@@ -1,0 +1,47 @@
+﻿================================================================================
+    CAN-LOGGER-DECODER: MCP2515 TO HOST CONTROLLER ASCII WIRING SCHEMATIC
+================================================================================
+
++-------------------------+                     +------------------------------+
+|     HOST CONTROLLER     |                     |    MCP2515 CAN MODULE BOARD   |
+|   (Arduino/ESP32/RPi)   |                     |    (Controller + Transceiver)|
+|                         |                     |                              |
+|          [3.3V / 5.0V] o+-------------------->o [VCC]                        |
+|                  [GND] o+-------------------->o [GND]                        |
+|                         |                     |                              |
+|           [SPI CS/SS]  o+-------------------->o [CS]   (Active-LOW Select)   |
+|           [SPI MOSI]   o+-------------------->o [SI]   (Slave Data In)       |
+|           [SPI MISO]   o<--------------------+o [SO]   (Slave Data Out)*     |
+|           [SPI SCK]    o+-------------------->o [SCK]  (Serial Clock)        |
+|                         |                     |                              |
+|           [GPIO INT]   o<--------+-----------+o [INT]  (Active-LOW Interrupt)|
+|                         |        |            |                              |
+|                         |       [10k Pull-up] |                              |
+|                         |        |            |                              |
+|                         |       (VCC)         |                              |
+|                         |                     |         DIFFERENTIAL BUS     |
+|                         |                     |                              |
+|                         |                     | [CAN_H] o---+----------------+===> CAN_H Bus Line
+|                         |                     |             |                |
+|                         |                     |            [120 Ohm]         |    (Terminator Jumper
+|                         |                     |             | (if endpoint)  |     enabled if endpoint)
+|                         |                     | [CAN_L] o---+----------------+===> CAN_L Bus Line
++-------------------------+                     +------------------------------+
+
+--------------------------------------------------------------------------------
+* LEVEL SHIFTER NOTE FOR 3.3V HOSTS (ESP32, STM32, Raspberry Pi):
+  When powering MCP2515 at 5.0V, the SO pin outputs 5.0V logic.
+  Use a bidirectional level shifter or a voltage divider on SO:
+  MCP2515 [SO] o----[ 1k Ohm ]----o----[ 2k Ohm ]----o [GND]
+                                  |
+                                  +----> Host [MISO] (3.3V safe)
+
+--------------------------------------------------------------------------------
+BUS TOPOLOGY (ISO 11898-2 HIGH SPEED CAN):
+
+  [ NODE 1 ] <====================== LINE BUS ======================> [ NODE N ]
+ (Terminated                                                          (Terminated
+   120 Ohm)               [ NODE 2 ]            [ NODE 3 ]              120 Ohm)
+                             |                     |
+                      (No Termination)      (No Termination)
+================================================================================
