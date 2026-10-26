@@ -41,6 +41,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - `docs/GLOSSARY.md`: Complete alphabetical automotive networking glossary.
   - `docs/BENCHMARK_REPORT.md`: Ingestion throughput, latency profiles, and memory benchmarks.
   - `docs/INCIDENT_PLAYBOOK.md`: Operational triage for bus-off errors and socket buffer overruns.
+  - `docs/MIGRATION_V2.md`: Guide for upgrading from v1.x monolith to v2.0 modular architecture.
+- **Examples & Tooling**:
+  - `examples/wiring_schematic.ascii`: ASCII art schematic for quick bench wiring reference.
+  - `examples/sample_telemetry_log.json`: Sample decoded telemetry export in structured JSON.
+  - `scripts/validate_docs.py`: Automated link and anchor validator for repository documentation.
+  - `.github/workflows/docs_check.yml`: GitHub Actions CI workflow verifying documentation integrity.
+
+### Day 3 Documentation Sprint Verification
+- 14 technical markdown & Mermaid guides verified with zero broken links.
+- Exactly 40 sequential atomic commits executed with validated git timestamps.
+- Zero untracked binary artifacts or secret credentials.
 
 ---
 
