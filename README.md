@@ -235,7 +235,9 @@ The build uses strict flags:
 
 ---
 
-## Linux Virtual CAN (`vcan0`) Testing Guide
+## Quickstart Guides
+
+### Linux Virtual CAN (`vcan0`)
 
 SocketCAN allows testing CAN applications on Linux without physical hardware via the `vcan` (Virtual CAN) kernel module.
 
@@ -306,7 +308,7 @@ cangen vcan0 -g 50 -I 100 -L 8
 
 ---
 
-## Fallback Mock Mode (Zero Hardware)
+### Fallback Mock Mode (Zero Hardware)
 
 If you are on a system without CAN drivers or want instant offline testing, run with `--mock`:
 
@@ -315,6 +317,21 @@ If you are on a system without CAN drivers or want instant offline testing, run 
 ```
 
 This starts the dynamic automotive vehicle physics generator, producing 30 frames at 10 Hz, printing the live decoded values and exporting them to `can_log.csv`.
+
+---
+
+### Physical MCP2515 Hardware
+
+To connect a physical MCP2515 CAN controller, wire the module to your host controller per the SPI pin mapping in the hardware guide, then run the decoder against the appropriate interface:
+
+```bash
+./can_decoder -i can0 -d sample.dbc -o can_log.csv
+```
+
+Full wiring, chip-select, interrupt, power, and bit-timing configuration details are in:
+- **`docs/HARDWARE_SETUP.md`** — MCP2515 pin mappings, CS/INT wiring, power requirements, and bit-timing.
+- **`docs/DEPLOYMENT_GUIDE.md`** — Production deployment and embedded flashing guide.
+- **`docs/TROUBLESHOOTING.md`** — Diagnostic procedures for SPI faults, SocketCAN, and bus-off states.
 
 ---
 
@@ -542,6 +559,8 @@ This project is licensed under the terms of the [MIT License](LICENSE).
 <!-- Day 1 Refactoring: 40 Atomic Commits Completed Cleanly (October 24, 2026) -->
 <!-- Day 2 Test Coverage: 45 Atomic Commits Completed Cleanly (October 25, 2026) -->
 <!-- Verification: 100% Unit Test Pass, Zero Defect Security Audit Gate Approved -->
+
+
 
 
 
