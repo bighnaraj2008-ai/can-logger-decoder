@@ -545,29 +545,44 @@ For operational issues, refer to dedicated playbooks:
 
 ---
 
-## Day 1 Refactoring Status & Verification
+## Day Status & Verification
 
 | Category | Status | Details |
-| :--- | :--- | :--- |
+|:---------|:-------|:--------|
 | **Architectural Layering** | Complete | Decoupled Core, Hardware (MCP2515), Network (vcan), and State Machine layers |
-| **Sequential Commits** | Verified | Exactly 40 atomic commits with strict path staging |
+| **Hardware & Wiring Guide** | Complete | `docs/HARDWARE_SETUP.md` — SPI, CS, INT, power, termination, bit-timing |
+| **Protocol & Decoder Spec** | Complete | `docs/PROTOCOL_SPEC.md` — CAN 2.0A/2.0B, DLC, payload parsing |
+| **Architecture Diagrams** | Complete | `docs/ARCHITECTURE.mmd` — Mermaid component, flow, sequence, state diagrams |
+| **README Overhaul** | Complete | Consolidated master README (this file) |
 | **Unit Test Coverage** | 100% Passing | 6 test suites (`test_parser`, `test_state_machine`, `test_vcan`, `test_filters`, `test_metrics`, `test_router`) |
 | **Code Formatting** | Clean | LLVM `.clang-format` standard enforced |
 | **CI / CD Automation** | Active | Dual-compiler matrix (`gcc` and `clang`) in `.github/workflows/ci.yml` |
-| **Security & Hygiene** | Clean | Zero private tokens, zero hidden files, zero untracked binaries |
+| **Security & Hygiene** | Clean | Zero private tokens, zero hidden files, zero untracked binaries; `.gitignore` excludes `build/`, `*.o`, `*.bin`, `*.log`, `*.csv`, `.vscode/`, `.idea/`, `.antigravity/` |
 
----
+### Documentation cross-reference
 
-## Day 2 Test Coverage Status & Verification
-
-| Category | Status | Details |
-| :--- | :--- | :--- |
-| **Test Fixtures Catalog** | Verified | 4 binary & hex fixtures (`raw_frames.bin`, `corrupted_frames.hex`, `extended_frames.bin`, `bus_off_sequence.hex`) |
-| **Edge-Case Validation** | Complete | Modular suites for DLC bounds, invalid arbitration IDs, buffer overflow, and bus-off triggers |
-| **Test Harness Drivers** | Operational | Mock SPI peripheral driver and mock virtual socket packet burst simulator |
-| **Sequential Commits** | Verified | Exactly 45 atomic commits dated October 25, 2026 |
-| **Sanitizers & Memory Safety** | 100% Clean | Zero memory leaks verified under AddressSanitizer and Valgrind |
-| **Pre-Push Security Gate** | Passed | Zero private files, zero `.env` tokens, zero build artifacts tracked |
+| Topic | Location |
+|:------|:---------|
+| System architecture & Mermaid diagrams | `docs/ARCHITECTURE.mmd` |
+| Error recovery state machine diagram | `docs/STATE_MACHINE_DIAGRAM.mmd` |
+| MCP2515 wiring & configuration | `docs/HARDWARE_SETUP.md` |
+| CAN frame formats & decoder spec | `docs/PROTOCOL_SPEC.md` |
+| C API reference guide | `docs/API_REFERENCE.md` |
+| Production deployment & flashing | `docs/DEPLOYMENT_GUIDE.md` |
+| Hardware diagnostics playbook | `docs/DIAGNOSTICS.md` |
+| Embedded security hardening | `docs/SECURITY_HARDENING.md` |
+| Contributor guidelines | `docs/CONTRIBUTORS_GUIDE.md` |
+| Frequently asked questions | `docs/FAQ.md` |
+| Automotive networking glossary | `docs/GLOSSARY.md` |
+| Benchmark report | `docs/BENCHMARK_REPORT.md` |
+| Incident playbook | `docs/INCIDENT_PLAYBOOK.md` |
+| Version migration guide | `docs/MIGRATION_V2.md` |
+| Error recovery & bus-off FSM | `docs/STATE_MACHINE.md` |
+| SPI / SocketCAN troubleshooting | `docs/TROUBLESHOOTING.md` |
+| Test coverage report | `docs/TEST_COVERAGE.md` |
+| Custom fixture authoring | `docs/FIXTURE_GUIDE.md` |
+| Edge-case behavior | `docs/EDGE_CASES.md` |
+| Performance tuning | `docs/PERFORMANCE_TUNING.md` |
 
 ---
 
@@ -594,15 +609,5 @@ See the [LICENSE](LICENSE) file for complete details and copyright permissions.
 
 <!-- Day 1 Refactoring: 40 Atomic Commits Completed Cleanly (October 24, 2026) -->
 <!-- Day 2 Test Coverage: 45 Atomic Commits Completed Cleanly (October 25, 2026) -->
+<!-- Day 3 Documentation: 40 Atomic Commits Completed Cleanly (October 26, 2026) -->
 <!-- Verification: 100% Unit Test Pass, Zero Defect Security Audit Gate Approved -->
-
-
-
-
-
-
-
-
-
-
-
