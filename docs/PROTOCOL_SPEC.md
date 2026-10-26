@@ -28,7 +28,76 @@ and the internal mock telemetry generator.
 
 ---
 
-## 2. Classical CAN frame layout (on the wire)
+## 2. CAN identifier structures
+
+The raw 32-bit `can_id` carried by SocketCAN may include flag bits. The driver
+strips flags and stores a clean identifier plus format flags in `can_msg_t`.
+
+### 2.1 Standard frame format (SFF, CAN 2.0A) — 11-bit identifier
+
+```
+ Bit(s)    Field
+ 28        SRR (Substitute Remote Request) — always recessive (1) in standard frames
+ 27        IDE (Identifier Extension)      = 0  (standard format)
+ 26–18     r0 — reserved bits (0)
+ 17–0      not used
+ 10–0      11-bit Standard Identifier (SID)
+```
+
+- Valid identifier range: `0x000` – `0x7FF` (0 – 2047 decimal).
+- Mask applied by the driver: `CAN_SFF_MASK = 0x000007FF`.
+- Flag bit `CAN_EFF_FLAG (0x80000000)` is **clear** for standard frames.
+
+### 2.2 Extended frame format (EFF, CAN 2.0B) — 29-bit identifier
+
+```
+ Bit(s)    Field
+ 31        FF flag (set by SocketCAN to mark an extended frame)
+ 30–29     SRR, IDE — IDE = 1 (extended format)
+ 28–0      29-bit Extended Identifier (EID)
+```
+
+- Valid identifier range: `0x00000000` – `0x1FFFFFFF` (0 – 536,870,911 decimal).
+- Mask applied by the driver: `CAN_EFF_MASK = 0x1FFFFFFF`.
+- Flag bit `CAN_EFF_FLAG (0x80000000)` is **set** for extended frames.
+
+### 2.3 Identifier flag bits (SocketCAN / `can_core.h`)
+
+| Flag | Value | Meaning |
+|:-----|:------|:--------|
+| `CAN_EFF_FLAG` | `0x80000000` | Frame uses extended (29-bit) format |
+| `CAN_RTR_FLAG` | `0x40000000` | Remote Transmission Request frame |
+| `CAN_ERR_FLAG` | `0x20000000` | Error frame (no useful data payload) |
+| `CAN_SFF_MASK` | `0x000007FF` | Mask to extract 11-bit standard ID |
+| `CAN_EFF_MASK` | `0x1FFFFFFF` | Mask to extract 29-bit extended ID |
+
+Helper functions (`include/can_core.h`):
+- `can_id_is_extended(raw_id)` — true when `CAN_EFF_FLAG` is set.
+- `can_id_clean(raw_id)` — returns identifier with flag bits stripped.
+
+### 2.4 Remote Transmission Request (RTR)
+
+RTR frames request data from another node without carrying a payload.
+
+- Flag: `CAN_RTR_FLAG (0x40000000)`.
+- The `can_msg_t.is_rtr` field is set accordingly.
+- RTR frames carry no data bytes; `dlc` indicates the requested length but the
+  `data[]` array is not populated.
+- The decoder skips DBC signal decoding for RTR frames (nothing to unpack).
+
+### 2.5 Error frames
+
+Error frames report bus or controller error conditions.
+
+- Flag: `CAN_ERR_FLAG (0x20000000)`.
+- The `can_msg_t.is_error` field is set.
+- The error machine (`src/state/error_machine.c`) translates error-frame
+  sightings into `EVT_ERROR_FRAME` events and adjusts TEC/REC confinement
+  counters. See `docs/STATE_MACHINE.md`.
+
+---
+
+## 3. Classical CAN frame layout (on the wire)
 
 ```
  Start of Frame (SOF)        1 bit   — dominant '0', synchronizes all nodes
@@ -41,24 +110,24 @@ and the internal mock telemetry generator.
  Interframe Space (IFS)      3 bits   — recessive (interframe bus-free)
 ```
 
-### 2.1 Arbitration field
+### 3.1 Arbitration field
 - Starts with the identifier (MSB first). The lowest numerical identifier wins
   bus arbitration (dominant bits overwrite recessive).
 - Followed by the RTR bit (dominant = data frame, recessive = remote frame)
   and the IDE bit (dominant = standard format for 11-bit).
 
-### 2.2 Control field
+### 3.2 Control field
 - Contains the 4-bit **DLC**, which encodes the number of data bytes (0–8 for
   classical CAN). Two reserved bits (`r0`) must be recessive.
 
-### 2.3 Data field
+### 3.3 Data field
 - 0 to 8 bytes, transmitted MSB-first within each byte.
 - Bit-stuffing: after five consecutive equal bits, the transmitter inserts a
   complementary stuff bit; receivers remove it. The driver's wire-format
   converters operate on already-de-stuffed bytes delivered by the controller
   / socket.
 
-### 2.4 CRC field (ISO 11898-1)
+### 3.4 CRC field (ISO 11898-1)
 - 15-bit CRC computed over the bit stream from SOF through the end of the data
   field, using polynomial `x^15 + x^14 + x^10 + x^8 + x^7 + x^4 + x^3 + 1`.
 - The controller hardware verifies the CRC on receive and generates it on
