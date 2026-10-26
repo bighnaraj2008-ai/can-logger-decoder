@@ -1,4 +1,4 @@
-﻿# Protocol & Decoder Specifications — CAN Frame Formats & Payload Parsing
+# Protocol & Decoder Specifications — CAN Frame Formats & Payload Parsing
 
 `can-logger-decoder` v2.0.0 · Day 3 Protocol Guide
 
@@ -82,7 +82,7 @@ RTR frames request data from another node without carrying a payload.
 - Flag: `CAN_RTR_FLAG (0x40000000)`.
 - The `can_msg_t.is_rtr` field is set accordingly.
 - RTR frames carry no data bytes; `dlc` indicates the requested length but the
-  `data[]` array is not populated.
+  `data[] array is not populated.
 - The decoder skips DBC signal decoding for RTR frames (nothing to unpack).
 
 ### 2.5 Error frames
@@ -139,3 +139,178 @@ Error frames report bus or controller error conditions.
 > of each 8-byte frame. This is exposed via `can_msg_t.checksum` /
 > `checksum_valid` and validated by `can_checksum_validate()` (`src/core/can_frame.c`).
 > It is **not** part of the ISO CAN wire CRC.
+
+---
+
+## 4. Data Length Code (DLC) rules
+
+The DLC is a 4-bit field in the control field. For classical CAN it maps 1:1
+to a byte count of 0–8.
+
+### 4.1 DLC-to-byte mapping
+
+| DLC | Data bytes | DLC | Data bytes |
+|:----|:-----------|:----|:-----------|
+| 0 | 0 | 4 | 4 |
+| 1 | 1 | 5 | 5 |
+| 2 | 2 | 6 | 6 |
+| 3 | 3 | 7 | 7 |
+| — | — | 8 | 8 |
+
+### 4.2 Validation helpers (`include/can_core.h`, `src/core/dlc_validator.c`)
+
+| Function | Behaviour |
+|:---------|:----------|
+| `can_dlc_is_valid(dlc)` | `true` iff `0 <= dlc <= 8` |
+| `can_dlc_to_bytes(dlc)` | Byte count for a DLC, or `CAN_ERR_INVALID_DLC` |
+| `can_bytes_to_dlc(len)` | DLC for a byte count, or `-1` if `len > 8` |
+| `can_dlc_to_length(dlc)` | Identity for 0–8; ISO 15765-2 CAN FD mapping for 9–15 (9→12 … 15→64), clamped for validation |
+
+The parser rejects any frame with `dlc > 8` and reports `CAN_ERR_INVALID_DLC`.
+The mock generator always emits valid DLCs (1–8) with an appended CRC-8 byte
+when the frame is 8 bytes long.
+
+---
+
+## 5. Payload parsing & DBC signal decoding
+
+Once a frame passes DLC and identifier validation, the DBC decoder maps its
+payload bytes to named engineering signals.
+
+### 5.1 Signal bit layout (Vector DBC convention)
+
+Each signal is defined by:
+- `start_bit` — bit index within the payload
+- `bit_len` — width in bits (1–64)
+- `endian` — `CAN_ENDIAN_LITTLE` (Intel, `@1`) or `CAN_ENDIAN_BIG` (Motorola, `@0`)
+- `sign` — `CAN_SIGN_UNSIGNED` (`+`) or `CAN_SIGN_SIGNED` (`-`, two's complement)
+
+#### Intel / Little-Endian (`@1`)
+Bit numbering starts at the **LSB of byte 0** and increases toward the MSB of
+the highest byte. A signal may cross byte boundaries.
+
+#### Motorola / Big-Endian (`@0`)
+Bit numbering starts at the **MSB of byte 0** and decreases through the LSB of
+byte 0, then continues to the MSB of byte 1, and so on. A signal may cross byte
+boundaries.
+
+### 5.2 Decoding formula
+
+For an extracted raw integer `R`:
+
+```
+Physical Value = (R × Scale) + Offset
+```
+
+- `Scale` and `Offset` come from the DBC `SG_` definition.
+- Signed values use two's complement interpretation of the extracted bit field.
+- Result is clamped / range-checked against DBC `[Min | Max]`; the decoder sets
+  `in_range = false` when outside bounds.
+
+### 5.3 Worked example (from `sample.dbc`)
+
+`BO_ 256 Engine_Data: 8 Engine_ECU`
+`SG_ EngineRPM : 0|16@1+ (0.25,0) [0|16383.75] "rpm" Dashboard_Display`
+
+Payload bytes: `10 27 72 1F 7F 82 AA 55`
+
+- `EngineRPM` starts at bit 0, length 16, little-endian, unsigned.
+- Raw 16-bit value (bytes 0–1, LSB first): `0x2710` = 10000.
+- Physical: `10000 × 0.25 + 0 = 2500.0 rpm`. In range `[OK]`.
+
+### 5.4 DBC syntax reference
+
+Message definition:
+```
+BO_ <MessageID_Dec> <MessageName>: <DLC> <TransmitterNode>
+```
+
+Signal definition:
+```
+SG_ <SignalName> : <StartBit>|<Length>@<Endian><Sign> (<Scale>,<Offset>) [<Min>|<Max>] "<Unit>" <ReceiverNodes>
+```
+
+| Field | Meaning | Example |
+|:------|:--------|:--------|
+| `<MessageID_Dec>` | CAN identifier, **decimal** | `256` (= `0x100`) |
+| `<DLC>` | Data length in bytes (1–8) | `8` |
+| `<StartBit>` | LSB bit index (Intel) / MSB (Motorola) | `0` |
+| `<Length>` | Bit field width | `16` |
+| `<Endian>` | `1` Intel little, `0` Motorola big | `1` |
+| `<Sign>` | `+` unsigned, `-` signed two's complement | `+` |
+| `(<Scale>,<Offset>)` | Linear scaling coefficients | `(0.25,0)` |
+| `[<Min>|<Max>]` | Engineering bounds | `[0|16383.75]` |
+| `"<Unit>"` | Unit string | `"rpm"` |
+
+For a full walkthrough, see the **DBC File Format Guide** in `README.md` and
+`include/dbc_decoder.h`.
+
+---
+
+## 6. Frame ingestion pipeline
+
+Raw bytes arrive from one of three sources (see `docs/ARCHITECTURE.mmd`):
+
+1. **Physical CAN** — MCP2515 over SPI (`src/hardware/`).
+2. **Virtual CAN** — Linux SocketCAN `vcan0` / `can0` (`src/network/`).
+3. **Mock telemetry** — built-in physics simulator fallback (`src/core/can_parser.c`).
+
+Each source yields a `can_frame_t`, which the parser converts into a
+host-order `can_msg_t`:
+
+```
+can_frame_t (wire)
+   ↓  strip flag bits, derive is_extended/is_rtr/is_error
+can_msg_t (host)
+   ↓  validate DLC (0–8), compute ISO-8601 + monotonic timestamp
+   ↓  error-machine event (RX_OK / ERROR_FRAME / BUS_OFF …)
+   ↓  DBC match by clean CAN ID
+   ↓  signal unpack (Intel/Motorola, sign, scale+offset)
+   ↓  logger output (CSV row + dashboard row)
+```
+
+Data structures:
+
+**`can_frame_t`** (`include/can_core.h`) — on-the-wire / controller-native:
+- `can_id` (raw, may include flag bits)
+- `can_dlc` (raw DLC)
+- `data[8]`
+- `is_extended`, `is_rtr`, `is_error` (derived)
+- `checksum`, `checksum_valid`
+
+**`can_msg_t`** (`include/can_parser.h` / `can_core.h`) — host-order message:
+- `can_id` (clean, flags stripped)
+- `dlc` (validated, 0–8)
+- `data[8]`
+- `timestamp_sec` (monotonic seconds)
+- `timestamp_iso[64]` (ISO-8601 UTC)
+- `is_extended`, `is_rtr`, `is_error`
+- `checksum`, `checksum_valid`
+
+### 6.1 Error handling in parsing
+
+| Condition | Result | Error code |
+|:----------|:-------|:-----------|
+| DLC > 8 | Rejected, not delivered | `CAN_ERR_INVALID_DLC` |
+| Checksum mismatch (mock frames) | Flagged `checksum_valid = false` | `CAN_ERR_CHECKSUM` |
+| No message available (non-blocking) | `can_bus_read()` returns 0 | `CAN_ERR_NO_MESSAGE` |
+| Socket / SPI read failure | `can_bus_read()` returns -1 | `CAN_ERR_IO` / `CAN_ERR_SPI_FAULT` |
+| Buffer overflow | State machine `EVT_SOCKET_OVERFLOW` | `CAN_ERR_BUFFER_OVERFLOW` |
+| Bus-off (TEC > 255) | State machine `ERR_STATE_BUS_OFF` | `CAN_ERR_BUS_OFF` |
+
+All layer functions return `can_error_t` (negative = failure, `CAN_OK = 0`);
+see `include/error_codes.h` and `can_error_string()`.
+
+---
+
+## 7. Cross-reference
+
+| Topic | Document |
+|:------|:---------|
+| MCP2515 SPI wiring & configuration | `docs/HARDWARE_SETUP.md` |
+| Register map, commands, modes, bit timing | `include/mcp2515.h` |
+| Error confinement FSM & bus-off recovery | `docs/STATE_MACHINE.md` |
+| DBC parser / signal decode API | `include/dbc_decoder.h` |
+| Error codes | `include/error_codes.h` |
+| System architecture & data-flow diagrams | `docs/ARCHITECTURE.mmd` |
+| Frame fixtures (raw / extended / corrupted) | `tests/fixtures/` |
