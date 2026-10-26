@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+﻿#!/usr/bin/env bash
 # ==============================================================================
 # CAN Logger & Decoder - Pre-Flight Integration Smoke Test
 # ==============================================================================
@@ -59,7 +59,39 @@ for f in "${REQUIRED_FILES[@]}"; do
 done
 echo -e "${GREEN}[PASS] All required source files present.${NC}"
 
-echo -e "\n2. Verifying build rules..."
+echo -e "\n2. Verifying Day 3 documentation & architectural artifacts..."
+DOC_FILES=(
+    "docs/HARDWARE_SETUP.md"
+    "docs/PROTOCOL_SPEC.md"
+    "docs/ARCHITECTURE.mmd"
+    "docs/STATE_MACHINE_DIAGRAM.mmd"
+    "docs/API_REFERENCE.md"
+    "docs/DEPLOYMENT_GUIDE.md"
+    "docs/DIAGNOSTICS.md"
+    "docs/SECURITY_HARDENING.md"
+    "docs/CONTRIBUTORS_GUIDE.md"
+    "docs/FAQ.md"
+    "docs/GLOSSARY.md"
+    "docs/BENCHMARK_REPORT.md"
+    "docs/INCIDENT_PLAYBOOK.md"
+    "docs/MIGRATION_V2.md"
+    "examples/wiring_schematic.ascii"
+    "examples/sample_telemetry_log.json"
+)
+
+for d in "${DOC_FILES[@]}"; do
+    if [[ ! -f "$d" ]]; then
+        echo -e "${RED}[FAIL] Missing required doc artifact: $d${NC}"
+        exit 1
+    fi
+done
+echo -e "${GREEN}[PASS] All Day 3 documentation and example artifacts verified.${NC}"
+
+if command -v python3 >/dev/null 2>&1 && [[ -f "scripts/validate_docs.py" ]]; then
+    python3 scripts/validate_docs.py || true
+fi
+
+echo -e "\n3. Verifying build rules..."
 if command -v make >/dev/null 2>&1; then
     make clean >/dev/null 2>&1 || true
     echo -e "${GREEN}[PASS] Clean target executed.${NC}"
@@ -67,7 +99,7 @@ else
     echo -e "${CYAN}[INFO] make command not found in shell environment, skipping direct invocation.${NC}"
 fi
 
-echo -e "\n3. Checking test scripts..."
+echo -e "\n4. Checking test scripts..."
 if [[ -f "scripts/run_unit_tests.sh" && -f "scripts/benchmark_decoder.sh" ]]; then
     echo -e "${GREEN}[PASS] Integration scripts verified and present.${NC}"
 fi
