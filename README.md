@@ -527,6 +527,17 @@ make test
 - Validates DLC bounds (`0..8`), classical CAN FD mappings, and payload truncation.
 - Exercises ISO 11898-1 Bus-Off fault confinement, automatic recovery, and socket buffer overflow recovery.
 
+## Troubleshooting Summary & Diagnostics
+
+For operational issues, refer to dedicated playbooks:
+
+| Issue | Playbook | Details |
+|:------|:---------|:--------|
+| **SPI bus faults / no response** | `docs/TROUBLESHOOTING.md` | Pin wiring, CS timing, SPI mode 0,0 vs 1,1 |
+| **Physical signal distortion** | `docs/DIAGNOSTICS.md` | Oscilloscope probe points, 60 Ω termination check |
+| **Bus-off state / overflow** | `docs/INCIDENT_PLAYBOOK.md` | Auto-recovery sequence, kernel buffer tuning |
+| **Test fixture mismatches** | `docs/FIXTURE_GUIDE.md` | Checksums and fixture generator script |
+
 ### Test Runner Troubleshooting
 - **Missing Fixture Files**: If `./scripts/run_unit_tests.sh` aborts with `Missing test fixture`, run `./scripts/validate_fixtures.sh` to confirm checksums or re-generate via `python3 examples/custom_fixture_generator.py`.
 - **Permission Denied on Scripts**: Ensure execution permissions are granted with `chmod +x scripts/*.sh`.
@@ -567,6 +578,7 @@ This project is licensed under the terms of the [MIT License](LICENSE).
 <!-- Day 1 Refactoring: 40 Atomic Commits Completed Cleanly (October 24, 2026) -->
 <!-- Day 2 Test Coverage: 45 Atomic Commits Completed Cleanly (October 25, 2026) -->
 <!-- Verification: 100% Unit Test Pass, Zero Defect Security Audit Gate Approved -->
+
 
 
 
