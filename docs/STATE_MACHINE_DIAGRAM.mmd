@@ -1,0 +1,63 @@
+﻿# Error Recovery & Fault Confinement State Machine Diagram
+
+`can-logger-decoder` v2.0.0 · Day 3 Architecture Specifications
+
+This diagram models the ISO 11898-1 fault confinement and bus-off recovery
+state machine implemented in `src/state/error_machine.c` and
+`src/state/bus_off_recovery.c`.
+
+```mermaid
+stateDiagram-v2
+    [*] --> NORMAL
+
+    NORMAL --> WARNING   : TEC/REC >= 96
+    WARNING --> ERROR_PASSIVE : TEC/REC >= 127
+    ERROR_PASSIVE --> BUS_OFF : TEC > 255
+
+    BUS_OFF --> RECOVERING : 128 occurrences of 11 recessive bits (ISO 11898-1)
+    RECOVERING --> NORMAL : Recovery complete (TEC & REC reset to 0)
+    BUS_OFF --> RESET : Hardware / Software SPI reset command
+    RESET --> NORMAL : Reset initialized & CONFIG exit
+    NORMAL --> RESET : SPI fault / manual re-init
+
+    WARNING --> NORMAL : Error count drops < 96
+    ERROR_PASSIVE --> WARNING : Error count drops < 127
+    RECOVERING --> BUS_OFF : Recovery failure / bus timeout
+    RESET --> FAILED : Maximum retries exceeded
+
+    state "Bus Off Recovery Sub-Machine" as BOR {
+        [*] --> IDLE
+        IDLE --> WAITING_BUS_IDLE : EVT_BUS_OFF detected
+        WAITING_BUS_IDLE --> RESET_ISSUED : 128 sequences elapsed
+        RESET_ISSUED --> RECOVERING : Controller hardware reset
+        RECOVERING --> RECOVERED : Controller entered NORMAL mode
+        RECOVERED --> [*]
+        RESET_ISSUED --> FAILED : Max retry limit reached (5 attempts)
+        WAITING_BUS_IDLE --> FAILED : Idle detection timeout (1000 ms)
+    }
+
+    note right of NORMAL
+        NORMAL (Error Active):
+        Node transmits active error flags (6 dominant bits).
+        TEC < 96 and REC < 96.
+    end note
+
+    note right of WARNING
+        WARNING:
+        Error warning limit reached.
+        TEC >= 96 or REC >= 96.
+    end note
+
+    note right of ERROR_PASSIVE
+        ERROR PASSIVE:
+        Node transmits passive error flags (6 recessive bits).
+        Must wait suspend transmission time (8 bits).
+        TEC >= 127 or REC >= 127.
+    end note
+
+    note right of BUS_OFF
+        BUS OFF:
+        Output driver disabled, node electrically disconnected.
+        TEC > 255.
+    end note
+```
