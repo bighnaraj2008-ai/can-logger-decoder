@@ -17,6 +17,26 @@ When physical hardware or virtual network interfaces are not available (e.g. run
 
 ---
 
+## System Architecture
+
+`can-logger-decoder` is layered into **Core**, **Hardware** (MCP2515 SPI), **Network** (SocketCAN/vcan), **State** (error recovery / bus-off), and **Application** (DBC decoder, dashboard, CSV logger) layers.
+
+Full Mermaid component, data-flow, sequence, and state-machine diagrams live in:
+
+- **`docs/ARCHITECTURE.mmd`** — system component diagram, end-to-end data flow, frame-reception sequence, and error-recovery state machine.
+- **`docs/STATE_MACHINE_DIAGRAM.mmd`** — dedicated fault confinement state machine diagram.
+
+A summary of the layered architecture and responsibilities:
+
+| Layer | Responsibility |
+|:------|:---------------|
+| Core | CAN identifiers, DLC limits, frame wire serialization, CRC-8 checksums, canonical error codes |
+| Bus acquisition | SocketCAN binding with automatic mock vehicle physics generator |
+| Hardware | MCP2515 SPI register map, init sequence, bit-timing, acceptance filters, interrupt service |
+| Network | Virtual CAN socket open/bind/read/write, non-blocking I/O, poll loop, frame routing |
+| State | Fault-confinement error-recovery FSM and ISO 11898-1 bus-off recovery |
+| Application | CLI, live dashboard, CSV logging, DBC decoding, runtime metrics |
+
 ## Architecture Overview
 
 ```
@@ -492,4 +512,5 @@ This project is licensed under the terms of the [MIT License](LICENSE).
 <!-- Day 1 Refactoring: 40 Atomic Commits Completed Cleanly (October 24, 2026) -->
 <!-- Day 2 Test Coverage: 45 Atomic Commits Completed Cleanly (October 25, 2026) -->
 <!-- Verification: 100% Unit Test Pass, Zero Defect Security Audit Gate Approved -->
+
 
