@@ -1,0 +1,111 @@
+﻿# System Architecture — Mermaid Diagrams
+
+`can-logger-decoder` v2.0.0 · Day 3 Architecture Guide
+
+This file contains Mermaid diagrams illustrating the system architecture and
+the end-to-end flow of CAN frames from hardware/vcan sources through the
+parser, state machine, DBC decoder, and logger output.
+
+Render these with any Mermaid-compatible viewer (GitHub, GitLab, VS Code
+Mermaid preview, Mermaid Live Editor, or `mermaid-cli`).
+
+---
+
+## Diagram 1 — End-to-end data flow
+
+Frame journey from source ingestion to logger output.
+
+```mermaid
+flowchart LR
+    %% ===== Inputs =====
+    subgraph IN["Frame Sources"]
+        PHYS[Physical CAN<br/>MCP2515 via SPI]
+        VIRT[Virtual CAN<br/>SocketCAN vcan0 / can0]
+        MOCK[Mock Telemetry<br/>physics-based simulator]
+    end
+
+    %% ===== Pipeline =====
+    subgraph PIPE["Decode Pipeline"]
+        INGEST[can_bus_read()<br/>frame ingestion<br/>can_parser.c]
+        VALIDATE[DLC & ID validation<br/>can_core.c · dlc_validator.c]
+        STATE[Error state machine<br/>src/state/<br/>warning → passive → bus-off]
+        FILTER[Acceptance filtering<br/>can_filters.c]
+        DECODE[DBC signal decode<br/>dbc_decoder.c<br/>Intel/Motorola · scale+offset]
+    end
+
+    %% ===== Outputs =====
+    subgraph OUT["Logger Outputs"]
+        DASH[Live terminal dashboard<br/>ANSI colorized gauges]
+        CSV[CSV telemetry log<br/>can_log.csv]
+        METRICS[Runtime metrics<br/>src/utils/metrics.c]
+    end
+
+    %% Flow
+    PHYS --> INGEST
+    VIRT --> INGEST
+    MOCK --> INGEST
+
+    INGEST --> VALIDATE
+    VALIDATE --> STATE
+    STATE --> FILTER
+    FILTER --> DECODE
+
+    DECODE --> DASH
+    DECODE --> CSV
+    DECODE --> METRICS
+
+    %% Fault side-path
+    STATE -.->|BUS_OFF / SPI fault| BOR[Bus-off recovery<br/>128 recessive bits<br/>reset → rejoin]
+    BOR -.->|recovered| STATE
+
+    %% Styling
+    classDef input fill:#e1f5e1,stroke:#2e7d32;
+    classDef pipe fill:#e3f2fd,stroke:#1565c0;
+    classDef out fill:#fff3e0,stroke:#ef6c00;
+    classDef fault fill:#ffebee,stroke:#c62828,stroke-dasharray: 5 5;
+
+    class PHYS,VIRT,MOCK input;
+    class INGEST,VALIDATE,STATE,FILTER,DECODE pipe;
+    class DASH,CSV,METRICS out;
+    class BOR fault;
+```
+
+---
+
+## Diagram 2 — Frame reception sequence
+
+Sequence of a single received CAN frame through the stack.
+
+```mermaid
+sequenceDiagram
+    autonumber
+    participant HW as MCP2515 Hardware
+    participant SPI as SPI Driver<br/>src/hardware
+    participant P as CAN Parser<br/>src/core/can_parser.c
+    participant S as State Machine<br/>src/state/error_machine.c
+    participant D as DBC Decoder<br/>src/dbc_decoder.c
+    participant L as CSV Logger<br/>src/main.c · logger.c
+    participant C as Console<br/>Live dashboard
+
+    HW->>SPI: /INT asserted (frame / error pending)
+    SPI->>SPI: Read CANINTF → classify RX / TX / error
+    SPI->>P: Deliver can_frame_t (ID, DLC, data)
+    P->>P: Strip flag bits; derive is_extended / is_rtr / is_error
+    P->>P: Validate DLC (0–8) + ISO-8601 timestamp
+    P->>S: Feed frame to error machine
+    S-->>P: State: NORMAL / WARNING / BUS_OFF / RESET
+
+    alt Healthy frame
+        P->>D: Match DBC message by clean CAN ID
+        D->>D: Unpack bits (Intel little / Motorola big)
+        D->>D: Apply scale + offset; range check
+        D->>L: Emit decoded signal values
+        D->>C: Render ANSI dashboard row
+        L->>L: Append row to can_log.csv
+    else Bus-off / fault
+        S->>S: Increment TEC/REC; enter BUS_OFF (TEC > 255)
+        S->>L: Log fault event
+        S->>S: Trigger bus-off recovery (128 recessive bits)
+        S-->>P: RECOVERED → resume frame delivery
+    end
+```
