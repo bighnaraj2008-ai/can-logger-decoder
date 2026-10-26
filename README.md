@@ -398,6 +398,14 @@ Options:
 
 ---
 
+## API Reference Guide
+
+Detailed C function signatures, parameter descriptions, structures, and lifecycle sequences are documented in:
+
+- **`docs/API_REFERENCE.md`** — Comprehensive reference for Core Parser (`can_core.h`), MCP2515 Hardware Driver (`mcp2515.h`), and Virtual Socket Network (`vcan_interface.h`) interfaces.
+
+---
+
 ## Output Formats
 
 ### 1. Live Terminal Visualization
@@ -559,6 +567,7 @@ This project is licensed under the terms of the [MIT License](LICENSE).
 <!-- Day 1 Refactoring: 40 Atomic Commits Completed Cleanly (October 24, 2026) -->
 <!-- Day 2 Test Coverage: 45 Atomic Commits Completed Cleanly (October 25, 2026) -->
 <!-- Verification: 100% Unit Test Pass, Zero Defect Security Audit Gate Approved -->
+
 
 
 
