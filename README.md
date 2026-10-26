@@ -177,6 +177,21 @@ can-logger-decoder/
 
 ---
 
+## Hardware & Wiring Reference
+
+See **`docs/HARDWARE_SETUP.md`** for the complete hardware specification, including:
+
+- MCP2515 module pinout and silicon pin reference (18-pin DIP/SOIC)
+- Recommended SPI pin mappings for Arduino Uno/Mega, ESP32, Raspberry Pi, and STM32
+- Chip Select (CS) line configuration and SPI modes (Mode 0,0 and Mode 1,1)
+- Interrupt (INT) pin wiring with pull-up guidelines and falling edge ISR handling
+- Power supply requirements (4.5V - 5.5V VDD) and 3.3V logic level shifting
+- Crystal / oscillator selection (8 MHz vs 16 MHz) and bit-timing registers
+- High-speed CAN bus termination (120 Ω at each bus end)
+- Complete ASCII wiring schematic and software driver configuration sequence
+
+---
+
 ## Prerequisites & Compilation
 
 ### Requirements
@@ -512,5 +527,6 @@ This project is licensed under the terms of the [MIT License](LICENSE).
 <!-- Day 1 Refactoring: 40 Atomic Commits Completed Cleanly (October 24, 2026) -->
 <!-- Day 2 Test Coverage: 45 Atomic Commits Completed Cleanly (October 25, 2026) -->
 <!-- Verification: 100% Unit Test Pass, Zero Defect Security Audit Gate Approved -->
+
 
 
