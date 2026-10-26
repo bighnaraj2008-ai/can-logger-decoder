@@ -571,6 +571,15 @@ For operational issues, refer to dedicated playbooks:
 
 ---
 
+## Contributing
+
+Contributions are welcome! Please review our guidelines before submitting pull requests:
+
+- **`docs/CONTRIBUTORS_GUIDE.md`** — Coding standards (LLVM C99 style), test verification rules, and Conventional Commits workflow.
+- **`docs/SECURITY_HARDENING.md`** — Embedded security standards and static analysis checks.
+
+---
+
 ## License
 
 This project is licensed under the terms of the [MIT License](LICENSE).
@@ -578,6 +587,7 @@ This project is licensed under the terms of the [MIT License](LICENSE).
 <!-- Day 1 Refactoring: 40 Atomic Commits Completed Cleanly (October 24, 2026) -->
 <!-- Day 2 Test Coverage: 45 Atomic Commits Completed Cleanly (October 25, 2026) -->
 <!-- Verification: 100% Unit Test Pass, Zero Defect Security Audit Gate Approved -->
+
 
 
 
