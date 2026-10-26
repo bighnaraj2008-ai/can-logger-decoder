@@ -1,4 +1,4 @@
-﻿# System Architecture — Mermaid Diagrams
+# System Architecture — Mermaid Diagrams
 
 `can-logger-decoder` v2.0.0 · Day 3 Architecture Guide
 
@@ -11,7 +11,116 @@ Mermaid preview, Mermaid Live Editor, or `mermaid-cli`).
 
 ---
 
-## Diagram 1 — End-to-end data flow
+## Diagram 1 — System component diagram
+
+High-level layering: physical CAN bus → MCP2515 / host → application layers →
+outputs.
+
+```mermaid
+graph TD
+    %% ===== Physical Layer =====
+    subgraph PHY["Physical Layer — MCP2515 CAN Controller"]
+        direction TB
+        BUS[CAN Bus<br/>CAN_H / CAN_L<br/>120 Ω termination at each end]
+        MCP[MCP2515<br/>Stand-alone CAN controller<br/>SPI slave]
+        XTAL[8 / 16 MHz crystal<br/>clock source]
+        nRESET[/RESET<br/>pull-up or GPIO]
+        nINT[/INT<br/>interrupt output]
+    end
+
+    %% ===== Host Controller =====
+    subgraph HOST["Host Controller — MCU / SBC"]
+        direction TB
+        SPI[SPI Master<br/>SCK · MOSI · MISO · CS]
+        GPIO[GPIO<br/>INT input · /RESET drive]
+        PWR[Power<br/>3.3 V / 5 V · decoupling]
+    end
+
+    %% ===== Application Layer =====
+    subgraph APP["Application Layer — can-logger-decoder"]
+        direction TB
+        subgraph HW["Hardware layer — src/hardware/"]
+            direction LR
+            DRV[MCP2515 SPI driver<br/>mcp2515_spi.c / mcp2515_init.c<br/>mcp2515_interrupt.c]
+            FIL[Acceptance filters<br/>mcp2515_filters.c]
+        end
+        subgraph NET["Network layer — src/network/"]
+            direction LR
+            VCAN[SocketCAN / vcan<br/>vcan_socket.c / vcan_listener.c]
+        end
+        subgraph CORE["Core layer — src/core/"]
+            direction LR
+            PARS[CAN frame parser<br/>can_parser.c / can_frame.c]
+            DLC[DLC validator<br/>dlc_validator.c]
+            ROUT[Frame router<br/>can_router.c]
+        end
+        subgraph STATE["State layer — src/state/"]
+            direction LR
+            ERRM[Error state machine<br/>error_machine.c]
+            BOR[Bus-off recovery<br/>bus_off_recovery.c]
+        end
+        subgraph APPL["Application — src/"]
+            direction LR
+            DBC[DBC signal decoder<br/>dbc_decoder.c]
+            LOG[CSV logger + dashboard<br/>main.c / logger.c / metrics.c]
+        end
+    end
+
+    %% ===== Outputs =====
+    subgraph OUT["Outputs"]
+        direction TB
+        CSV[(can_log.csv<br/>structured telemetry log)]
+        CONSOLE[Live terminal dashboard<br/>ANSI colorized gauges]
+        METRICS[Runtime metrics<br/>frame drops · TEC/REC]
+    end
+
+    %% ===== Connections — physical =====
+    BUS <==>|CAN_H / CAN_L| MCP
+    XTAL -->|Clock| MCP
+    nRESET -.->|Hold / release| MCP
+    nINT -->|Interrupt (falling edge)| GPIO
+
+    %% ===== Connections — host SPI =====
+    MCP <==>|SCK / MOSI / MISO| SPI
+    MCP -->|Chip Select CS| SPI
+    GPIO -.->|/RESET drive| MCP
+
+    %% ===== Connections — host to application =====
+    SPI <==>|Register read/write / burst| DRV
+    GPIO -.->|INT hint → poll CANINTF| DRV
+    VCAN ==>|vcan frames| PARS
+    DRV ==>|can_frame_t| PARS
+
+    %% ===== Connections — internal pipeline =====
+    PARS -->|validated frames| DLC
+    DLC -->|dlc 0–8 OK| ROUT
+    ROUT -->|route by filter| ERRM
+    ERRM -->|healthy / fault events| BOR
+    ERRM -->|accepted frames| DBC
+    BOR -.->|bus-off / recovered| LOG
+    DBC -->|engineering values| LOG
+    DBC -->|range [OK / OUT-OF-BOUNDS]| LOG
+
+    %% ===== Connections — outputs =====
+    LOG ==>|rows appended| CSV
+    LOG ==>|ANSI tables| CONSOLE
+    LOG ==>|telemetry counters| METRICS
+
+    %% Styling
+    classDef phy fill:#e1f5e1,stroke:#2e7d32,stroke-width:2px;
+    classDef host fill:#e3f2fd,stroke:#1565c0,stroke-width:2px;
+    classDef app fill:#fff3e0,stroke:#ef6c00,stroke-width:2px;
+    classDef out fill:#f3e5f5,stroke:#7b1fa2,stroke-width:2px;
+
+    class BUS,MCP,XTAL,nRESET,nINT phy;
+    class SPI,GPIO,PWR host;
+    class DRV,FIL,VCAN,PARS,DLC,ROUT,ERRM,BOR,DBC,LOG app;
+    class CSV,CONSOLE,METRICS out;
+```
+
+---
+
+## Diagram 2 — End-to-end data flow
 
 Frame journey from source ingestion to logger output.
 
@@ -72,7 +181,7 @@ flowchart LR
 
 ---
 
-## Diagram 2 — Frame reception sequence
+## Diagram 3 — Frame reception sequence
 
 Sequence of a single received CAN frame through the stack.
 
@@ -109,3 +218,70 @@ sequenceDiagram
         S-->>P: RECOVERED → resume frame delivery
     end
 ```
+
+---
+
+## Diagram 4 — Error-recovery state machine
+
+Fault-confinement FSM driven by bus, socket, and SPI events.
+
+```mermaid
+stateDiagram-v2
+    [*] --> NORMAL
+
+    NORMAL --> WARNING   : TEC/REC >= 96
+    WARNING --> ERROR_PASSIVE : TEC/REC >= 127
+    ERROR_PASSIVE --> BUS_OFF : TEC > 255
+
+    BUS_OFF --> RECOVERING : 128 recessive bits<br/>ISO 11898-1 recovery
+    RECOVERING --> NORMAL : Recovery complete
+    BUS_OFF --> RESET : Manual reset / SPI fault
+    RESET --> NORMAL : Reset complete
+    NORMAL --> RESET : SPI fault / manual reset
+
+    WARNING --> NORMAL : Counters decay < 96
+    ERROR_PASSIVE --> WARNING : Counters < 127
+    RECOVERING --> BUS_OFF : Recovery timeout
+    RESET --> NORMAL : on_recovered callback
+
+    state "Error Recovery" as ER {
+        [*] --> IDLE
+        IDLE --> WAITING : bus-off detected
+        WAITING --> RESET_ISSUED : bus idle
+        RESET_ISSUED --> RECOVERING : reset complete
+        RECOVERING --> RECOVERED : 128 sequences elapsed
+        RECOVERED --> [*]
+        RESET_ISSUED --> FAILED : reset attempts exhausted
+        WAITING --> FAILED : bus-idle timeout
+    }
+
+    note right of NORMAL
+        Thresholds:
+        WARNING 96 · PASSIVE 127 · BUS_OFF 256
+    end note
+```
+
+---
+
+## How to render / validate
+
+These diagrams use standard Mermaid syntax (`graph`, `flowchart`, `sequenceDiagram`,
+`stateDiagram-v2`) and are compatible with:
+
+- GitHub / GitLab Markdown rendering
+- VS Code "Markdown: Preview Mermaid Diagrams" or the Mermaid Preview extension
+- [Mermaid Live Editor](https://mermaid.live)
+- [`mermaid-cli`](https://github.com/mermaid-js/mermaid-cli) (`mmdc`) for
+  static PNG/SVG export:
+
+```bash
+# Install once
+npm install -g mermaid-cli
+
+# Export each diagram to SVG
+mmdc -i docs/ARCHITECTURE.mmd -o architecture.svg
+```
+
+> `mmdc` extracts the first fenced Mermaid block per file. To export a
+> specific diagram, place it in its own `.mmd` file or use the `--page` /
+> sequence options supported by your `mermaid-cli` version.
