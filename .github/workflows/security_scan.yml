@@ -1,0 +1,54 @@
+name: Security Scan
+
+on:
+  push:
+    branches: [ main, master ]
+  pull_request:
+    branches: [ main, master ]
+  schedule:
+    - cron: '0 4 * * 1'
+
+concurrency:
+  group: security-scan-${{ github.head_ref || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  security-audit:
+    name: Security & Vulnerability Audit
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Audit Banned C Functions
+        run: |
+          echo "Scanning for unsafe C library functions..."
+          BANNED_FUNCS="gets|strcpy|strcat|sprintf\(|vsprintf\("
+          MATCHES=$(grep -rnE "\b(${BANNED_FUNCS})" src/ include/ || true)
+          if [ -n "$MATCHES" ]; then
+            echo "::error::Banned unsafe C functions found:"
+            echo "$MATCHES"
+            exit 1
+          fi
+          echo "No banned unsafe C functions detected."
+
+      - name: Check File Permissions & Executables
+        run: |
+          echo "Verifying no unauthorized executables tracked in repository..."
+          find . -maxdepth 3 -type f \( -name "*.bin" -o -name "*.exe" -o -name "*.o" \) \
+            ! -path "./tests/fixtures/*" | while read -r file; do
+            echo "::error::Unauthorized binary found: $file"
+            exit 1
+          done
+          echo "Repository binary audit passed."
+
+      - name: Verify Secret Hygiene & Hidden Configs
+        run: |
+          echo "Scanning for forbidden environment or configuration files..."
+          FORBIDDEN_FILES=$(find . -maxdepth 3 \( -name ".env*" -o -name "*.swp" -o -name ".DS_Store" \))
+          if [ -n "$FORBIDDEN_FILES" ]; then
+            echo "::error::Forbidden configuration files found:"
+            echo "$FORBIDDEN_FILES"
+            exit 1
+          fi
+          echo "Secret hygiene audit passed cleanly."
