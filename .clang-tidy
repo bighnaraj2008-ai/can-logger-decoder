@@ -1,0 +1,22 @@
+---
+# CAN Logger & Decoder â€” clang-tidy Static Analysis Configuration (Day 4)
+# Applied in static_analysis.yml via compile_commands.json from CMake.
+Checks: >
+    -*,
+    bugprone-*,
+    -bugprone-easily-swappable-parameters,
+    -bugprone-narrowing-conversions,
+    portability-*,
+    -portability-restrict-system-includes,
+    performance-*,
+    readability-*,
+    -readability-function-naming-comment,
+    -readability-identifier-naming,
+    -readability-uppercase-literal-suffix,
+    misc-*,
+    -misc-const-correctness,
+    -misc-non-private-member-variables-in-classes
+
+WarningsAsErrors: ''
+HeaderFilterRegex: ''
+...
