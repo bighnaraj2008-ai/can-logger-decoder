@@ -1,24 +1,27 @@
 ---
+# CAN Logger & Decoder â€” Strict C Coding Style (Day 4)
+# Enforced by scripts/check_formatting.sh and ci_build.yml / static_analysis.yml
 BasedOnStyle: LLVM
-Language: Cpp
-Standard: c++11
+Language: C
+Standard: c11
+
+# Formatting metrics
 ColumnLimit: 100
-IndentWidth: 4
-TabWidth: 4
-UseTab: Never
+
+# Pointer / reference alignment
 PointerAlignment: Right
 ReferenceAlignment: Right
-AllowShortBlocksOnASingleLine: false
-AllowShortFunctionsOnASingleLine: None
-AllowShortIfStatementsOnASingleLine: false
-AllowShortLoopsOnASingleLine: false
-BreakBeforeBraces: Attach
+
+# Spaces
 SpaceAfterCStyleCast: false
 SpacesInAngles: false
 SpacesInContainerLiterals: false
 SpacesInParentheses: false
 SpacesInSquareBrackets: false
-SpaceBeforeParens: ControlStatements
+
+# Sorting
 SortIncludes: false
 IncludeBlocks: Preserve
+SortUsingDeclarations: false
+
 ...
