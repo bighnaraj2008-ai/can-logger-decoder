@@ -23,8 +23,8 @@ When physical hardware or virtual network interfaces are not available (e.g. run
 
 Full Mermaid component, data-flow, sequence, and state-machine diagrams live in:
 
-- **`docs/ARCHITECTURE.mmd`** — system component diagram, end-to-end data flow, frame-reception sequence, and error-recovery state machine.
-- **`docs/STATE_MACHINE_DIAGRAM.mmd`** — dedicated fault confinement state machine diagram.
+- **`docs/ARCHITECTURE.mmd`** â€” system component diagram, end-to-end data flow, frame-reception sequence, and error-recovery state machine.
+- **`docs/STATE_MACHINE_DIAGRAM.mmd`** â€” dedicated fault confinement state machine diagram.
 
 A summary of the layered architecture and responsibilities:
 
@@ -40,42 +40,42 @@ A summary of the layered architecture and responsibilities:
 ## Architecture Overview
 
 ```
-                      â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
-                      â”‚        CAN Bus Input Sources         â”‚
-                      â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¬â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜
-                                         â”‚
-                 â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”´â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
-                 â”‚                                               â”‚
+                      Ã¢â€Å’Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€Â
+                      Ã¢â€â€š        CAN Bus Input Sources         Ã¢â€â€š
+                      Ã¢â€â€Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€Â¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€Ëœ
+                                         Ã¢â€â€š
+                 Ã¢â€Å’Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€Â´Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€Â
+                 Ã¢â€â€š                                               Ã¢â€â€š
        [ Real Linux SocketCAN ]                        [ Mock Telemetry Engine ]
         - Physical: can0, can1                          - Dynamic vehicle physics
         - Virtual:  vcan0, vcan1                        - Cycles standard messages
         - Kernel sys/socket & linux/can                 - High-fidelity bit packing
-                 â”‚                                               â”‚
-                 â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¬â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜
-                                         â”‚
-                                         â–¼
-                      â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
-                      â”‚    Raw Frame Ingestion (can_parser)   â”‚
-                      â”‚  - ID masking (11-bit SFF / 29-bit EFF)â”‚
-                      â”‚  - Monotonic & ISO-8601 timestamps    â”‚
-                      â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¬â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜
-                                         â”‚
-                                         â–¼
-                      â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
-                      â”‚   DBC Signal Decoder (dbc_decoder)   â”‚
-                      â”‚  - Parser: BO_ (msg) & SG_ (signals) â”‚
-                      â”‚  - Intel (Little) & Motorola (Big)    â”‚
-                      â”‚  - Signed 2's Complement Unpacking   â”‚
-                      â”‚  - Formula: Val = Raw * Scale + Off   â”‚
-                      â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¬â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜
-                                         â”‚
-                         â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”´â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
-                         â–¼                               â–¼
-            â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”     â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
-            â”‚ Live Terminal Dashboard â”‚     â”‚  Structured CSV Logger  â”‚
-            â”‚  - Colorized ANSI gaugesâ”‚     â”‚  - can_log.csv          â”‚
-            â”‚  - Out-of-bounds alerts â”‚     â”‚  - Microsecond precisionâ”‚
-            â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜     â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜
+                 Ã¢â€â€š                                               Ã¢â€â€š
+                 Ã¢â€â€Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€Â¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€Ëœ
+                                         Ã¢â€â€š
+                                         Ã¢â€“Â¼
+                      Ã¢â€Å’Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€Â
+                      Ã¢â€â€š    Raw Frame Ingestion (can_parser)   Ã¢â€â€š
+                      Ã¢â€â€š  - ID masking (11-bit SFF / 29-bit EFF)Ã¢â€â€š
+                      Ã¢â€â€š  - Monotonic & ISO-8601 timestamps    Ã¢â€â€š
+                      Ã¢â€â€Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€Â¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€Ëœ
+                                         Ã¢â€â€š
+                                         Ã¢â€“Â¼
+                      Ã¢â€Å’Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€Â
+                      Ã¢â€â€š   DBC Signal Decoder (dbc_decoder)   Ã¢â€â€š
+                      Ã¢â€â€š  - Parser: BO_ (msg) & SG_ (signals) Ã¢â€â€š
+                      Ã¢â€â€š  - Intel (Little) & Motorola (Big)    Ã¢â€â€š
+                      Ã¢â€â€š  - Signed 2's Complement Unpacking   Ã¢â€â€š
+                      Ã¢â€â€š  - Formula: Val = Raw * Scale + Off   Ã¢â€â€š
+                      Ã¢â€â€Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€Â¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€Ëœ
+                                         Ã¢â€â€š
+                         Ã¢â€Å’Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€Â´Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€Â
+                         Ã¢â€“Â¼                               Ã¢â€“Â¼
+            Ã¢â€Å’Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€Â     Ã¢â€Å’Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€Â
+            Ã¢â€â€š Live Terminal Dashboard Ã¢â€â€š     Ã¢â€â€š  Structured CSV Logger  Ã¢â€â€š
+            Ã¢â€â€š  - Colorized ANSI gaugesÃ¢â€â€š     Ã¢â€â€š  - can_log.csv          Ã¢â€â€š
+            Ã¢â€â€š  - Out-of-bounds alerts Ã¢â€â€š     Ã¢â€â€š  - Microsecond precisionÃ¢â€â€š
+            Ã¢â€â€Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€Ëœ     Ã¢â€â€Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€Ëœ
 ```
 
 ---
@@ -84,61 +84,61 @@ A summary of the layered architecture and responsibilities:
 
 ```text
 can-logger-decoder/
-â”œâ”€â”€ Makefile                # Layered build, cross-platform targets
-â”œâ”€â”€ CMakeLists.txt          # Modern CMake cross-platform configuration
-â”œâ”€â”€ LICENSE                 # MIT Open Source License
-â”œâ”€â”€ README.md               # Detailed technical documentation and tutorial
-â”œâ”€â”€ sample.dbc              # Automotive DBC database (Engine, Brake, Transmission)
-â”œâ”€â”€ CHANGELOG.md            # Release and refactoring changelog
-â”œâ”€â”€ .clang-format           # Strict C formatting standard
-â”œâ”€â”€ docs/
-â”‚   â”œâ”€â”€ ARCHITECTURE_REFACTOR.md   # Day 1 refactoring architecture overview
-â”‚   â”œâ”€â”€ STATE_MACHINE.md           # Error recovery & bus-off FSM reference
-â”‚   â”œâ”€â”€ PERFORMANCE_TUNING.md      # CAN frame optimization & tuning guide
-â”‚   â”œâ”€â”€ TROUBLESHOOTING.md         # Hardware SPI & virtual socket guide
-â”‚   â”œâ”€â”€ FIXTURE_GUIDE.md           # Authoring custom binary and hex test fixtures
-â”‚   â””â”€â”€ BENCHMARK_TEMPLATE.md      # Test execution telemetry benchmark template
-â”œâ”€â”€ include/
-â”‚   â”œâ”€â”€ can_core.h          # CAN identifiers, DLC limits, frame & message types
-â”‚   â”œâ”€â”€ mcp2515.h           # MCP2515 SPI register map, commands, modes, timing
-â”‚   â”œâ”€â”€ vcan_interface.h    # Virtual CAN socket API and frame routing
-â”‚   â”œâ”€â”€ can_filters.h       # Acceptance filter sets, matching, and routing
-â”‚   â”œâ”€â”€ error_codes.h       # Canonical can_error_t codes and descriptions
-â”‚   â””â”€â”€ dbc_decoder.h       # DBC parsing, bit unpacking, signal definitions
-â”œâ”€â”€ src/
-â”‚   â”œâ”€â”€ main.c              # CLI loop, ANSI console dashboard, CSV logging
-â”‚   â”œâ”€â”€ dbc_decoder.c       # DBC file parser, Intel/Motorola unpacking
-â”‚   â”œâ”€â”€ core/
-â”‚   â”‚   â”œâ”€â”€ can_parser.c    # Bus handle: SocketCAN binding + mock telemetry
-â”‚   â”‚   â”œâ”€â”€ can_frame.c     # Frame wire format, validation, checksum utilities
-â”‚   â”‚   â”œâ”€â”€ dlc_validator.c # Strict DLC bounds checking & CAN FD mapping
-â”‚   â”‚   â””â”€â”€ can_router.c    # Bidirectional hardware/vcan frame router
-â”‚   â”œâ”€â”€ hardware/
-â”‚   â”‚   â”œâ”€â”€ mcp2515_spi.c       # MCP2515 SPI transport & register model
-â”‚   â”‚   â”œâ”€â”€ mcp2515_init.c      # Modular hardware initialization sequence
-â”‚   â”‚   â”œâ”€â”€ mcp2515_interrupt.c # Refined SPI interrupt service dispatcher
-â”‚   â”‚   â””â”€â”€ mcp2515_filters.c   # Hardware filter & mask register setup
-â”‚   â”œâ”€â”€ network/
-â”‚   â”‚   â”œâ”€â”€ vcan_socket.c   # Virtual socket creation & interface binding
-â”‚   â”‚   â””â”€â”€ vcan_listener.c # Efficient frame read loop & polling dispatcher
-â”‚   â”œâ”€â”€ state/
-â”‚   â”‚   â”œâ”€â”€ error_machine.c     # Fault-confinement error-recovery FSM
-â”‚   â”‚   â””â”€â”€ bus_off_recovery.c  # ISO 11898-1 bus-off recovery controller
-â”‚   â””â”€â”€ utils/
-â”‚       â”œâ”€â”€ logger.c        # Structured multi-level logging framework
-â”‚       â”œâ”€â”€ crc_check.c     # ISO CAN CRC-15 & frame integrity utilities
-â”‚       â””â”€â”€ metrics.c       # Runtime telemetry & frame drop counter tracking
-â”œâ”€â”€ scripts/
-â”‚   â”œâ”€â”€ run_unit_tests.sh   # Automated test suite runner
-â”‚   â”œâ”€â”€ benchmark_decoder.sh # Frame throughput benchmark
-â”‚   â””â”€â”€ smoke_test.sh       # Pre-flight integration smoke test
-â””â”€â”€ tests/
-    â”œâ”€â”€ test_parser.c       # Core parser, wire format & validation tests
-    â”œâ”€â”€ test_state_machine.c # Error FSM and bus-off recovery tests
-    â”œâ”€â”€ test_vcan.c         # Virtual socket interface tests
-    â”œâ”€â”€ test_filters.c      # MCP2515 hardware filtering tests
-    â”œâ”€â”€ test_metrics.c      # Decoder telemetry metrics tests
-    â””â”€â”€ test_router.c       # Bidirectional frame routing tests
+Ã¢â€Å“Ã¢â€â‚¬Ã¢â€â‚¬ Makefile                # Layered build, cross-platform targets
+Ã¢â€Å“Ã¢â€â‚¬Ã¢â€â‚¬ CMakeLists.txt          # Modern CMake cross-platform configuration
+Ã¢â€Å“Ã¢â€â‚¬Ã¢â€â‚¬ LICENSE                 # MIT Open Source License
+Ã¢â€Å“Ã¢â€â‚¬Ã¢â€â‚¬ README.md               # Detailed technical documentation and tutorial
+Ã¢â€Å“Ã¢â€â‚¬Ã¢â€â‚¬ sample.dbc              # Automotive DBC database (Engine, Brake, Transmission)
+Ã¢â€Å“Ã¢â€â‚¬Ã¢â€â‚¬ CHANGELOG.md            # Release and refactoring changelog
+Ã¢â€Å“Ã¢â€â‚¬Ã¢â€â‚¬ .clang-format           # Strict C formatting standard
+Ã¢â€Å“Ã¢â€â‚¬Ã¢â€â‚¬ docs/
+Ã¢â€â€š   Ã¢â€Å“Ã¢â€â‚¬Ã¢â€â‚¬ ARCHITECTURE_REFACTOR.md   # Day 1 refactoring architecture overview
+Ã¢â€â€š   Ã¢â€Å“Ã¢â€â‚¬Ã¢â€â‚¬ STATE_MACHINE.md           # Error recovery & bus-off FSM reference
+Ã¢â€â€š   Ã¢â€Å“Ã¢â€â‚¬Ã¢â€â‚¬ PERFORMANCE_TUNING.md      # CAN frame optimization & tuning guide
+Ã¢â€â€š   Ã¢â€Å“Ã¢â€â‚¬Ã¢â€â‚¬ TROUBLESHOOTING.md         # Hardware SPI & virtual socket guide
+Ã¢â€â€š   Ã¢â€Å“Ã¢â€â‚¬Ã¢â€â‚¬ FIXTURE_GUIDE.md           # Authoring custom binary and hex test fixtures
+Ã¢â€â€š   Ã¢â€â€Ã¢â€â‚¬Ã¢â€â‚¬ BENCHMARK_TEMPLATE.md      # Test execution telemetry benchmark template
+Ã¢â€Å“Ã¢â€â‚¬Ã¢â€â‚¬ include/
+Ã¢â€â€š   Ã¢â€Å“Ã¢â€â‚¬Ã¢â€â‚¬ can_core.h          # CAN identifiers, DLC limits, frame & message types
+Ã¢â€â€š   Ã¢â€Å“Ã¢â€â‚¬Ã¢â€â‚¬ mcp2515.h           # MCP2515 SPI register map, commands, modes, timing
+Ã¢â€â€š   Ã¢â€Å“Ã¢â€â‚¬Ã¢â€â‚¬ vcan_interface.h    # Virtual CAN socket API and frame routing
+Ã¢â€â€š   Ã¢â€Å“Ã¢â€â‚¬Ã¢â€â‚¬ can_filters.h       # Acceptance filter sets, matching, and routing
+Ã¢â€â€š   Ã¢â€Å“Ã¢â€â‚¬Ã¢â€â‚¬ error_codes.h       # Canonical can_error_t codes and descriptions
+Ã¢â€â€š   Ã¢â€â€Ã¢â€â‚¬Ã¢â€â‚¬ dbc_decoder.h       # DBC parsing, bit unpacking, signal definitions
+Ã¢â€Å“Ã¢â€â‚¬Ã¢â€â‚¬ src/
+Ã¢â€â€š   Ã¢â€Å“Ã¢â€â‚¬Ã¢â€â‚¬ main.c              # CLI loop, ANSI console dashboard, CSV logging
+Ã¢â€â€š   Ã¢â€Å“Ã¢â€â‚¬Ã¢â€â‚¬ dbc_decoder.c       # DBC file parser, Intel/Motorola unpacking
+Ã¢â€â€š   Ã¢â€Å“Ã¢â€â‚¬Ã¢â€â‚¬ core/
+Ã¢â€â€š   Ã¢â€â€š   Ã¢â€Å“Ã¢â€â‚¬Ã¢â€â‚¬ can_parser.c    # Bus handle: SocketCAN binding + mock telemetry
+Ã¢â€â€š   Ã¢â€â€š   Ã¢â€Å“Ã¢â€â‚¬Ã¢â€â‚¬ can_frame.c     # Frame wire format, validation, checksum utilities
+Ã¢â€â€š   Ã¢â€â€š   Ã¢â€Å“Ã¢â€â‚¬Ã¢â€â‚¬ dlc_validator.c # Strict DLC bounds checking & CAN FD mapping
+Ã¢â€â€š   Ã¢â€â€š   Ã¢â€â€Ã¢â€â‚¬Ã¢â€â‚¬ can_router.c    # Bidirectional hardware/vcan frame router
+Ã¢â€â€š   Ã¢â€Å“Ã¢â€â‚¬Ã¢â€â‚¬ hardware/
+Ã¢â€â€š   Ã¢â€â€š   Ã¢â€Å“Ã¢â€â‚¬Ã¢â€â‚¬ mcp2515_spi.c       # MCP2515 SPI transport & register model
+Ã¢â€â€š   Ã¢â€â€š   Ã¢â€Å“Ã¢â€â‚¬Ã¢â€â‚¬ mcp2515_init.c      # Modular hardware initialization sequence
+Ã¢â€â€š   Ã¢â€â€š   Ã¢â€Å“Ã¢â€â‚¬Ã¢â€â‚¬ mcp2515_interrupt.c # Refined SPI interrupt service dispatcher
+Ã¢â€â€š   Ã¢â€â€š   Ã¢â€â€Ã¢â€â‚¬Ã¢â€â‚¬ mcp2515_filters.c   # Hardware filter & mask register setup
+Ã¢â€â€š   Ã¢â€Å“Ã¢â€â‚¬Ã¢â€â‚¬ network/
+Ã¢â€â€š   Ã¢â€â€š   Ã¢â€Å“Ã¢â€â‚¬Ã¢â€â‚¬ vcan_socket.c   # Virtual socket creation & interface binding
+Ã¢â€â€š   Ã¢â€â€š   Ã¢â€â€Ã¢â€â‚¬Ã¢â€â‚¬ vcan_listener.c # Efficient frame read loop & polling dispatcher
+Ã¢â€â€š   Ã¢â€Å“Ã¢â€â‚¬Ã¢â€â‚¬ state/
+Ã¢â€â€š   Ã¢â€â€š   Ã¢â€Å“Ã¢â€â‚¬Ã¢â€â‚¬ error_machine.c     # Fault-confinement error-recovery FSM
+Ã¢â€â€š   Ã¢â€â€š   Ã¢â€â€Ã¢â€â‚¬Ã¢â€â‚¬ bus_off_recovery.c  # ISO 11898-1 bus-off recovery controller
+Ã¢â€â€š   Ã¢â€â€Ã¢â€â‚¬Ã¢â€â‚¬ utils/
+Ã¢â€â€š       Ã¢â€Å“Ã¢â€â‚¬Ã¢â€â‚¬ logger.c        # Structured multi-level logging framework
+Ã¢â€â€š       Ã¢â€Å“Ã¢â€â‚¬Ã¢â€â‚¬ crc_check.c     # ISO CAN CRC-15 & frame integrity utilities
+Ã¢â€â€š       Ã¢â€â€Ã¢â€â‚¬Ã¢â€â‚¬ metrics.c       # Runtime telemetry & frame drop counter tracking
+Ã¢â€Å“Ã¢â€â‚¬Ã¢â€â‚¬ scripts/
+Ã¢â€â€š   Ã¢â€Å“Ã¢â€â‚¬Ã¢â€â‚¬ run_unit_tests.sh   # Automated test suite runner
+Ã¢â€â€š   Ã¢â€Å“Ã¢â€â‚¬Ã¢â€â‚¬ benchmark_decoder.sh # Frame throughput benchmark
+Ã¢â€â€š   Ã¢â€â€Ã¢â€â‚¬Ã¢â€â‚¬ smoke_test.sh       # Pre-flight integration smoke test
+Ã¢â€â€Ã¢â€â‚¬Ã¢â€â‚¬ tests/
+    Ã¢â€Å“Ã¢â€â‚¬Ã¢â€â‚¬ test_parser.c       # Core parser, wire format & validation tests
+    Ã¢â€Å“Ã¢â€â‚¬Ã¢â€â‚¬ test_state_machine.c # Error FSM and bus-off recovery tests
+    Ã¢â€Å“Ã¢â€â‚¬Ã¢â€â‚¬ test_vcan.c         # Virtual socket interface tests
+    Ã¢â€Å“Ã¢â€â‚¬Ã¢â€â‚¬ test_filters.c      # MCP2515 hardware filtering tests
+    Ã¢â€Å“Ã¢â€â‚¬Ã¢â€â‚¬ test_metrics.c      # Decoder telemetry metrics tests
+    Ã¢â€â€Ã¢â€â‚¬Ã¢â€â‚¬ test_router.c       # Bidirectional frame routing tests
 ```
 
 ---
@@ -156,7 +156,7 @@ can-logger-decoder/
      - Engine RPM dynamic curves (800 - 4500 RPM)
      - Vehicle Speed correlating with gear ratio (0 - 140 km/h)
      - Throttle position, Coolant temperature thermal warm-up, Oil temperature
-     - Alternator battery voltage ripple (14.1V Â± 0.15V)
+     - Alternator battery voltage ripple (14.1V Ã‚Â± 0.15V)
      - Brake application hydraulic pressures and gear shifting
    - Can also be forced anytime via the `--mock` CLI flag.
 
@@ -187,7 +187,7 @@ See **`docs/HARDWARE_SETUP.md`** for the complete hardware specification, includ
 - Interrupt (INT) pin wiring with pull-up guidelines and falling edge ISR handling
 - Power supply requirements (4.5V - 5.5V VDD) and 3.3V logic level shifting
 - Crystal / oscillator selection (8 MHz vs 16 MHz) and bit-timing registers
-- High-speed CAN bus termination (120 Ω at each bus end)
+- High-speed CAN bus termination (120 Î© at each bus end)
 - Complete ASCII wiring schematic and software driver configuration sequence
 
 ---
@@ -200,9 +200,9 @@ See **`docs/PROTOCOL_SPEC.md`** for the complete protocol specification, includi
 - Linux SocketCAN flag bits (`CAN_EFF_FLAG`, `CAN_RTR_FLAG`, `CAN_ERR_FLAG`)
 - Classical CAN frame wire layout (SOF, arbitration, control, data, CRC-15, ACK, EOF, IFS)
 - Remote Transmission Request (RTR) frames and error frames
-- Data Length Code (DLC) rules (0–8 bytes) and validation helpers
+- Data Length Code (DLC) rules (0â€“8 bytes) and validation helpers
 - Payload parsing: Intel little-endian vs Motorola big-endian bit unpackers
-- Mathematical DBC signal decoding: `Physical Value = (Raw × Scale) + Offset`
+- Mathematical DBC signal decoding: `Physical Value = (Raw Ã— Scale) + Offset`
 - CRC-15 (ISO 11898-1) and internal simulation CRC-8 payload validation
 
 ---
@@ -275,14 +275,14 @@ Open a second terminal and transmit standard CAN frames using `cansend`:
 - Engine RPM = 2500 rpm (`raw = 10000 = 0x2710`) -> Bytes `10 27`
 - Vehicle Speed = 80.50 km/h (`raw = 8050 = 0x1F72`) -> Bytes `72 1F`
 - Throttle Position = 50.0 % (`raw = 127 = 0x7F`) -> Byte `7F`
-- Engine Oil Temp = 90.0 Â°C (`raw = 130 = 0x82`) -> Byte `82`
+- Engine Oil Temp = 90.0 Ã‚Â°C (`raw = 130 = 0x82`) -> Byte `82`
 
 ```bash
 cansend vcan0 100#1027721F7F820000
 ```
 
 #### Example 2: Engine Status (`0x101` / 257)
-- Coolant Temp = 88 Â°C (`raw = 88 - (-40) = 128 = 0x80`) -> Byte `80`
+- Coolant Temp = 88 Ã‚Â°C (`raw = 88 - (-40) = 128 = 0x80`) -> Byte `80`
 - Fuel Pressure = 380 kPa (`raw = 380 / 4 = 95 = 0x5F`) -> Byte `5F`
 - Engine Running & MIL Off -> Byte `01`
 - Battery Voltage = 14.1 V (`raw = 14.1 / 0.1 = 141 = 0x8D`) -> Byte `8D`
@@ -329,9 +329,9 @@ To connect a physical MCP2515 CAN controller, wire the module to your host contr
 ```
 
 Full wiring, chip-select, interrupt, power, and bit-timing configuration details are in:
-- **`docs/HARDWARE_SETUP.md`** — MCP2515 pin mappings, CS/INT wiring, power requirements, and bit-timing.
-- **`docs/DEPLOYMENT_GUIDE.md`** — Production deployment and embedded flashing guide.
-- **`docs/TROUBLESHOOTING.md`** — Diagnostic procedures for SPI faults, SocketCAN, and bus-off states.
+- **`docs/HARDWARE_SETUP.md`** â€” MCP2515 pin mappings, CS/INT wiring, power requirements, and bit-timing.
+- **`docs/DEPLOYMENT_GUIDE.md`** â€” Production deployment and embedded flashing guide.
+- **`docs/TROUBLESHOOTING.md`** â€” Diagnostic procedures for SPI faults, SocketCAN, and bus-off states.
 
 ---
 
@@ -402,7 +402,7 @@ Options:
 
 Detailed C function signatures, parameter descriptions, structures, and lifecycle sequences are documented in:
 
-- **`docs/API_REFERENCE.md`** — Comprehensive reference for Core Parser (`can_core.h`), MCP2515 Hardware Driver (`mcp2515.h`), and Virtual Socket Network (`vcan_interface.h`) interfaces.
+- **`docs/API_REFERENCE.md`** â€” Comprehensive reference for Core Parser (`can_core.h`), MCP2515 Hardware Driver (`mcp2515.h`), and Virtual Socket Network (`vcan_interface.h`) interfaces.
 
 ---
 
@@ -412,17 +412,17 @@ Detailed C function signatures, parameter descriptions, structures, and lifecycl
 
 ```text
 [2026-10-12T17:50:12.450Z] 0x100 (256) Engine_Data        DLC:8 [10 27 72 1F 7F 82 AA 55]
-  â”œâ”€â”€ EngineRPM              :    2500.00 rpm    (raw: 10000 ) [OK]
-  â”œâ”€â”€ VehicleSpeed           :      80.50 km/h   (raw: 8050  ) [OK]
-  â”œâ”€â”€ ThrottlePosition       :      49.80 %      (raw: 127   ) [OK]
-  â””â”€â”€ EngineOilTemp          :      90.00 degC   (raw: 130   ) [OK]
+  Ã¢â€Å“Ã¢â€â‚¬Ã¢â€â‚¬ EngineRPM              :    2500.00 rpm    (raw: 10000 ) [OK]
+  Ã¢â€Å“Ã¢â€â‚¬Ã¢â€â‚¬ VehicleSpeed           :      80.50 km/h   (raw: 8050  ) [OK]
+  Ã¢â€Å“Ã¢â€â‚¬Ã¢â€â‚¬ ThrottlePosition       :      49.80 %      (raw: 127   ) [OK]
+  Ã¢â€â€Ã¢â€â‚¬Ã¢â€â‚¬ EngineOilTemp          :      90.00 degC   (raw: 130   ) [OK]
 
 [2026-10-12T17:50:12.550Z] 0x101 (257) Engine_Status      DLC:8 [80 5F 01 8D 00 00 00 00]
-  â”œâ”€â”€ CoolantTemperature     :      88.00 degC   (raw: 128   ) [OK]
-  â”œâ”€â”€ FuelPressure           :     380.00 kPa    (raw: 95    ) [OK]
-  â”œâ”€â”€ EngineStatus           :       1.00        (raw: 1     ) [OK]
-  â”œâ”€â”€ CheckEngineLight       :       0.00        (raw: 0     ) [OK]
-  â””â”€â”€ BatteryVoltage         :      14.10 V      (raw: 141   ) [OK]
+  Ã¢â€Å“Ã¢â€â‚¬Ã¢â€â‚¬ CoolantTemperature     :      88.00 degC   (raw: 128   ) [OK]
+  Ã¢â€Å“Ã¢â€â‚¬Ã¢â€â‚¬ FuelPressure           :     380.00 kPa    (raw: 95    ) [OK]
+  Ã¢â€Å“Ã¢â€â‚¬Ã¢â€â‚¬ EngineStatus           :       1.00        (raw: 1     ) [OK]
+  Ã¢â€Å“Ã¢â€â‚¬Ã¢â€â‚¬ CheckEngineLight       :       0.00        (raw: 0     ) [OK]
+  Ã¢â€â€Ã¢â€â‚¬Ã¢â€â‚¬ BatteryVoltage         :      14.10 V      (raw: 141   ) [OK]
 ```
 
 ### 2. CSV Telemetry Log Schema (`can_log.csv`)
@@ -534,7 +534,7 @@ For operational issues, refer to dedicated playbooks:
 | Issue | Playbook | Details |
 |:------|:---------|:--------|
 | **SPI bus faults / no response** | `docs/TROUBLESHOOTING.md` | Pin wiring, CS timing, SPI mode 0,0 vs 1,1 |
-| **Physical signal distortion** | `docs/DIAGNOSTICS.md` | Oscilloscope probe points, 60 Ω termination check |
+| **Physical signal distortion** | `docs/DIAGNOSTICS.md` | Oscilloscope probe points, 60 Î© termination check |
 | **Bus-off state / overflow** | `docs/INCIDENT_PLAYBOOK.md` | Auto-recovery sequence, kernel buffer tuning |
 | **Test fixture mismatches** | `docs/FIXTURE_GUIDE.md` | Checksums and fixture generator script |
 
@@ -550,9 +550,9 @@ For operational issues, refer to dedicated playbooks:
 | Category | Status | Details |
 |:---------|:-------|:--------|
 | **Architectural Layering** | Complete | Decoupled Core, Hardware (MCP2515), Network (vcan), and State Machine layers |
-| **Hardware & Wiring Guide** | Complete | `docs/HARDWARE_SETUP.md` — SPI, CS, INT, power, termination, bit-timing |
-| **Protocol & Decoder Spec** | Complete | `docs/PROTOCOL_SPEC.md` — CAN 2.0A/2.0B, DLC, payload parsing |
-| **Architecture Diagrams** | Complete | `docs/ARCHITECTURE.mmd` — Mermaid component, flow, sequence, state diagrams |
+| **Hardware & Wiring Guide** | Complete | `docs/HARDWARE_SETUP.md` â€” SPI, CS, INT, power, termination, bit-timing |
+| **Protocol & Decoder Spec** | Complete | `docs/PROTOCOL_SPEC.md` â€” CAN 2.0A/2.0B, DLC, payload parsing |
+| **Architecture Diagrams** | Complete | `docs/ARCHITECTURE.mmd` â€” Mermaid component, flow, sequence, state diagrams |
 | **README Overhaul** | Complete | Consolidated master README (this file) |
 | **Unit Test Coverage** | 100% Passing | 6 test suites (`test_parser`, `test_state_machine`, `test_vcan`, `test_filters`, `test_metrics`, `test_router`) |
 | **Code Formatting** | Clean | LLVM `.clang-format` standard enforced |
@@ -586,6 +586,30 @@ For operational issues, refer to dedicated playbooks:
 
 ---
 
+
+---
+
+## Code Style & Linting Standards
+
+The repository enforces strict formatting and static analysis standards on every commit:
+
+- **Formatting (`.clang-format`)**: LLVM-based C style with 4-space indentation, 100-character line length, attached braces, and right-aligned pointers (`int *ptr`). Enforced via `scripts/check_formatting.sh`.
+- **Static Analysis (`.clang-tidy`)**: Bugprone, security analyzer, portability, and performance checks enabled with zero tolerated warnings (`--warnings-as-errors=*`).
+- **Cppcheck (`.github/linters/.cppcheck`)**: Multi-directory analysis covering `src/`, `include/`, and `tests/`.
+
+```bash
+# Verify formatting conformance:
+./scripts/check_formatting.sh
+
+# Apply formatting fixes automatically:
+./scripts/format_code.sh
+
+# Run local static analysis (cppcheck + clang-tidy):
+./scripts/run_linter.sh
+```
+
+See **`docs/LINTER_STANDARDS.md`** and **`docs/CI_CD_PIPELINE.md`** for detailed rules and CI configurations.
+
 ## Version Migration
 
 Upgrading from v1.x? See **`docs/MIGRATION_V2.md`** for detailed instructions on updating header includes, handling `can_error_t` return codes, configuring new acceptance filters, and adapting to the modular directory structure.
@@ -596,8 +620,8 @@ Upgrading from v1.x? See **`docs/MIGRATION_V2.md`** for detailed instructions on
 
 Contributions are welcome! Please review our guidelines before submitting pull requests:
 
-- **`docs/CONTRIBUTORS_GUIDE.md`** — Coding standards (LLVM C99 style), test verification rules, and Conventional Commits workflow.
-- **`docs/SECURITY_HARDENING.md`** — Embedded security standards and static analysis checks.
+- **`docs/CONTRIBUTORS_GUIDE.md`** â€” Coding standards (LLVM C99 style), test verification rules, and Conventional Commits workflow.
+- **`docs/SECURITY_HARDENING.md`** â€” Embedded security standards and static analysis checks.
 
 ---
 
