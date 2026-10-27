@@ -7,10 +7,21 @@ Standard: c11
 
 # Formatting metrics
 ColumnLimit: 100
+IndentWidth: 4
+TabWidth: 4
+UseTab: Never
 
 # Pointer / reference alignment
 PointerAlignment: Right
 ReferenceAlignment: Right
+
+# Braces
+BreakBeforeBraces: Attach
+AllowShortBlocksOnASingleLine: false
+AllowShortFunctionsOnASingleLine: None
+AllowShortIfStatementsOnASingleLine: false
+AllowShortLoopsOnASingleLine: false
+AllowShortCaseLabelsOnASingleLine: false
 
 # Spaces
 SpaceAfterCStyleCast: false
@@ -18,10 +29,17 @@ SpacesInAngles: false
 SpacesInContainerLiterals: false
 SpacesInParentheses: false
 SpacesInSquareBrackets: false
+SpaceBeforeParens: ControlStatements
+SpaceBeforeAssignmentOperators: true
+SpaceAroundOperators: true
 
 # Sorting
 SortIncludes: false
 IncludeBlocks: Preserve
 SortUsingDeclarations: false
+
+# Other
+NamespaceIndentation: None
+PointerAlignment: Right
 
 ...
