@@ -1,4 +1,4 @@
-﻿# CAN Bus Logger & Signal Decoder (`can-logger-decoder`)
+# CAN Bus Logger & Signal Decoder (`can-logger-decoder`)
 
 [![CI Build](https://img.shields.io/badge/CI-Passing-brightgreen?style=flat-square&logo=githubactions)](.github/workflows/ci.yml)
 [![C Standard](https://img.shields.io/badge/Language-C99%20%2F%20GNU99-blue?style=flat-square&logo=c)](https://en.wikipedia.org/wiki/C99)
