@@ -1,0 +1,51 @@
+name: Static Analysis
+
+on:
+  pull_request:
+    branches: [ main, master ]
+  push:
+    branches: [ main, master ]
+
+concurrency:
+  group: static-analysis-${{ github.head_ref || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  cppcheck:
+    name: cppcheck
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Install cppcheck
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y cppcheck
+
+      - name: Run cppcheck Static Analysis
+        run: |
+          cppcheck \
+            --enable=all \
+            --suppress=missingIncludeSystem \
+            --suppress=unusedFunction \
+            --suppress=missingInclude \
+            --suppress=constVariablePointer \
+            --suppress=constVariable \
+            --suppress=constParameterPointer \
+            --suppress=staticFunction \
+            --suppress=unusedStructMember \
+            --suppress=redundantAssignment \
+            --suppress=unreadVariable \
+            --suppress=badBitmaskCheck \
+            --suppress=variableScope \
+            --suppress=clarifyCalculation \
+            --suppress=invalidPrintfArgType_uint \
+            --suppress=normalCheckLevelMaxBranches \
+            --std=c11 \
+            --language=c \
+            --quiet \
+            --error-exitcode=1 \
+            src/ \
+            include/ \
+            tests/
