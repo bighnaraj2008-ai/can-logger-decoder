@@ -1,4 +1,4 @@
-﻿# Changelog — can-logger-decoder
+# Changelog — can-logger-decoder
 
 All notable changes to the `can-logger-decoder` automotive telemetry parser and embedded logging suite are documented in this file.
 
@@ -7,6 +7,39 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [2.1.0] - 2026-10-27 â€” Day 4 CI/CD & Linting Automation Sprint
+
+### Added
+- **Multi-Compiler CI Build Matrix** (`.github/workflows/ci_build.yml`):
+  - Matrix testing across GCC 12, GCC 13, Clang 15, and Clang 16 on Ubuntu runners.
+  - Automated compilation, unit test execution, and CLI smoke test with `sample.dbc`.
+  - Concurrency group management canceling obsolete runs.
+- **Automated Static Analysis Workflow** (`.github/workflows/static_analysis.yml`):
+  - Comprehensive cppcheck static analysis with strict `--error-exitcode=1`.
+  - CMake compilation database generation and clang-tidy analysis with `--warnings-as-errors=*`.
+- **Cross-Compilation & Packaging** (`.github/workflows/release_artifacts.yml`):
+  - Multi-target packaging for `x86_64-linux-gnu`, `arm-linux-gnueabihf`, and `x86_64-w64-mingw32`.
+  - Automated binary stripping, tarball creation, SHA-256 checksums, and GitHub Releases asset upload.
+- **Security & Integrity Pipelines**:
+  - CodeQL advanced code analysis workflow (`.github/workflows/code_ql.yml`).
+  - Security audit scanner checking for banned C functions (`.github/workflows/security_scan.yml`).
+  - Dependency and fixture checksum validation (`.github/workflows/dependency_check.yml`).
+- **Linter & Formatting Configurations**:
+  - LLVM-based strict C style rules (`.clang-format`).
+  - CERT secure coding and safety rule set (`.clang-tidy`).
+  - Custom cppcheck rules file (`.github/linters/.cppcheck`).
+- **Developer Scripts & Utilities**:
+  - Local static analysis runner (`scripts/run_linter.sh`).
+  - Local format verification helper (`scripts/check_formatting.sh`).
+  - Automated in-place source formatter (`scripts/format_code.sh`).
+  - GitHub Actions workflow validator (`scripts/validate_workflows.sh`).
+  - Automated style compliance test runner (`tests/linter/test_style_compliance.sh`).
+- **Documentation**:
+  - CI/CD pipeline architecture guide (`docs/CI_CD_PIPELINE.md`).
+  - C coding standards and linter guide (`docs/LINTER_STANDARDS.md`).
+  - CI/CD troubleshooting runbook (`docs/TROUBLESHOOTING_CI.md`).
+
+---
 ## [2.0.0] - 2026-10-26 — Day 3 Advanced Documentation Sprint
 
 ### Added
