@@ -1,4 +1,4 @@
-﻿#!/usr/bin/env bash
+#!/usr/bin/env bash
 # ==============================================================================
 # CAN Logger & Decoder - Pre-Flight Integration Smoke Test
 # ==============================================================================
@@ -103,6 +103,32 @@ echo -e "\n4. Checking test scripts..."
 if [[ -f "scripts/run_unit_tests.sh" && -f "scripts/benchmark_decoder.sh" ]]; then
     echo -e "${GREEN}[PASS] Integration scripts verified and present.${NC}"
 fi
+
+echo -e "\n5. Verifying Day 4 CI/CD workflows and automation scripts..."
+DAY4_FILES=(
+    ".clang-format"
+    ".clang-tidy"
+    ".github/workflows/ci_build.yml"
+    ".github/workflows/static_analysis.yml"
+    ".github/workflows/release_artifacts.yml"
+    ".github/workflows/security_scan.yml"
+    ".github/workflows/code_ql.yml"
+    ".github/workflows/dependency_check.yml"
+    "scripts/run_linter.sh"
+    "scripts/check_formatting.sh"
+    "scripts/format_code.sh"
+    "docs/CI_CD_PIPELINE.md"
+    "docs/LINTER_STANDARDS.md"
+    "docs/TROUBLESHOOTING_CI.md"
+)
+
+for f in "${DAY4_FILES[@]}"; do
+    if [[ ! -f "$f" ]]; then
+        echo -e "${RED}[FAIL] Missing Day 4 file: $f${NC}"
+        exit 1
+    fi
+done
+echo -e "${GREEN}[PASS] All Day 4 CI/CD and automation artifacts verified.${NC}"
 
 echo -e "\n${CYAN}================================================================${NC}"
 echo -e "${GREEN}SMOKE TEST COMPLETED SUCCESSFULLY (EXIT 0)${NC}"
