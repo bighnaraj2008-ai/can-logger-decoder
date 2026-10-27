@@ -6,27 +6,62 @@ on:
   pull_request:
     branches: [ main, master ]
 
+concurrency:
+  group: ci-build-${{ github.head_ref || github.ref }}
+  cancel-in-progress: true
+
 jobs:
   build-and-test:
-    name: GCC Native Build
+    name: ${{ matrix.compiler }} ${{ matrix.compiler-version }}
     runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - compiler: gcc
+            compiler-version: '13'
+            apt-package: gcc-13
+          - compiler: gcc
+            compiler-version: '12'
+            apt-package: gcc-12
+          - compiler: clang
+            compiler-version: '16'
+            apt-package: clang-16
+          - compiler: clang
+            compiler-version: '15'
+            apt-package: clang-15
+
+    env:
+      CC: ${{ matrix.compiler }}-${{ matrix.compiler-version }}
+      CXX: ${{ matrix.compiler }}-${{ matrix.compiler-version }}
+
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v4
 
-      - name: Install Dependencies
+      - name: Install Dependencies (${{ matrix.compiler }} ${{ matrix.compiler-version }})
         run: |
           sudo apt-get update
-          sudo apt-get install -y gcc make cmake
+          sudo apt-get install -y ${{ matrix.apt-package }} make cmake
 
       - name: Show Compiler Version
-        run: gcc --version
+        run: ${{ env.CC }} --version
 
-      - name: Compile
+      - name: Compile (${{ matrix.compiler }} ${{ matrix.compiler-version }})
         run: |
           make clean
-          make all
+          make CC=${{ env.CC }} all
 
-      - name: Run Unit Tests
+      - name: Run Unit Test Suites (${{ matrix.compiler }} ${{ matrix.compiler-version }})
         run: |
-          make test
+          make CC=${{ env.CC }} test
+
+      - name: Run Automated Test Runner Script
+        run: |
+          chmod +x scripts/run_unit_tests.sh
+          ./scripts/run_unit_tests.sh
+
+      - name: Verify CLI Execution with Sample DBC
+        run: |
+          ./can_decoder -d sample.dbc --summary
+          ./can_decoder -d sample.dbc --mock -c 20
