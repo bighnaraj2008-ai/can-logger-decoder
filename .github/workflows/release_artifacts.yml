@@ -1,0 +1,92 @@
+name: Release Artifacts
+
+on:
+  push:
+    tags: [ 'v*' ]
+
+permissions:
+  contents: write
+
+jobs:
+  cross-compile-and-package:
+    name: Build and Package Release Binaries
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        include:
+          - target: x86_64-linux-gnu
+            cc: gcc
+            artifact-suffix: linux-x86_64
+          - target: arm-linux-gnueabihf
+            cc: arm-linux-gnueabihf-gcc
+            artifact-suffix: linux-armv7hf
+          - target: x86_64-w64-mingw32
+            cc: x86_64-w64-mingw32-gcc
+            artifact-suffix: windows-x86_64
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Extract Version Tag
+        id: tag
+        run: |
+          echo "version=${GITHUB_REF#refs/tags/}" >> $GITHUB_OUTPUT
+
+      - name: Install Build Dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y build-essential cmake make gcc
+          # Cross-compilation toolchains
+          sudo apt-get install -y \
+            gcc-arm-linux-gnueabihf \
+            binutils-arm-linux-gnueabihf \
+            mingw-w64
+
+      - name: Configure and Build (${{ matrix.target }})
+        run: |
+          cmake -S . -B build/${{ matrix.target }} \
+            -DCMAKE_C_COMPILER=${{ matrix.cc }} \
+            -DCMAKE_C_STANDARD=99 \
+            -DCMAKE_C_STANDARD_REQUIRED=ON \
+            -DCMAKE_BUILD_TYPE=Release
+          cmake --build build/${{ matrix.target }} --config Release -j$(nproc)
+
+      - name: Strip Binaries
+        run: |
+          ${{ matrix.cc }}-strip --strip-all build/${{ matrix.target }}/can_decoder || true
+
+      - name: Package Release Artifact
+        id: package
+        run: |
+          ARTIFACT_DIR="release_${{ matrix.artifact-suffix }}"
+          mkdir -p "$ARTIFACT_DIR"
+          cp "build/${{ matrix.target }}/can_decoder" "$ARTIFACT_DIR/"
+          cp LICENSE "$ARTIFACT_DIR/"
+          cp README.md "$ARTIFACT_DIR/"
+          cp sample.dbc "$ARTIFACT_DIR/"
+          cp CHANGELOG.md "$ARTIFACT_DIR/"
+          tar -czf "can_decoder-${{ steps.tag.outputs.version }}-${{ matrix.artifact-suffix }}.tar.gz" -C "$ARTIFACT_DIR" .
+          echo "artifact=can_decoder-${{ steps.tag.outputs.version }}-${{ matrix.artifact-suffix }}.tar.gz" >> $GITHUB_OUTPUT
+          echo "artifact-dir=$ARTIFACT_DIR" >> $GITHUB_OUTPUT
+
+      - name: Generate Checksum
+        run: |
+          sha256sum "${{ steps.package.outputs.artifact }}" > "${{ steps.package.outputs.artifact }}.sha256"
+
+      - name: Upload Release Asset
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ github.ref }}
+          name: Release ${{ steps.tag.outputs.version }}
+          files: |
+            ${{ steps.package.outputs.artifact }}
+            ${{ steps.package.outputs.artifact }}.sha256
+          draft: false
+          prerelease: false
+          generate_release_notes: true
+
+      - name: Clean Build Artifacts
+        if: always()
+        run: |
+          rm -rf build release_*
