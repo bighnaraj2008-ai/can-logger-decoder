@@ -1,0 +1,32 @@
+name: CI Build
+
+on:
+  push:
+    branches: [ main, master ]
+  pull_request:
+    branches: [ main, master ]
+
+jobs:
+  build-and-test:
+    name: GCC Native Build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Install Dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y gcc make cmake
+
+      - name: Show Compiler Version
+        run: gcc --version
+
+      - name: Compile
+        run: |
+          make clean
+          make all
+
+      - name: Run Unit Tests
+        run: |
+          make test
