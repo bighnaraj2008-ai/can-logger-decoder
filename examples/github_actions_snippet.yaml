@@ -1,0 +1,16 @@
+# Sample GitHub Actions Step Snippet for can-logger-decoder
+# Use this snippet to integrate can-logger-decoder into your own workflow.
+
+- name: Setup Embedded CAN Test Environment
+  run: |
+    sudo apt-get update
+    sudo apt-get install -y can-utils iproute2 gcc make cmake
+
+- name: Build CAN Logger & Decoder
+  run: |
+    make clean
+    make all CC=gcc
+
+- name: Run Decoder Regression Suite
+  run: |
+    ./can_decoder -d sample.dbc --mock -c 50 --summary
