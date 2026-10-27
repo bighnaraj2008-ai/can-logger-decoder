@@ -1,0 +1,23 @@
+# Cppcheck configuration for can-logger-decoder (Day 4)
+--enable=all
+--std=c11
+--language=c
+--error-exitcode=1
+--quiet
+--inline-suppr
+--suppress=missingIncludeSystem
+--suppress=missingInclude
+--suppress=unusedFunction
+--suppress=constVariablePointer
+--suppress=constVariable
+--suppress=constParameterPointer
+--suppress=staticFunction
+--suppress=unusedStructMember
+--suppress=redundantAssignment
+--suppress=unreadVariable
+--suppress=badBitmaskCheck
+--suppress=variableScope
+--suppress=clarifyCalculation
+--suppress=invalidPrintfArgType_uint
+--suppress=normalCheckLevelMaxBranches
+-I include/
