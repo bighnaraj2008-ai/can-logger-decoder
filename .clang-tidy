@@ -1,22 +1,49 @@
 ---
 # CAN Logger & Decoder â€” clang-tidy Static Analysis Configuration (Day 4)
+# Targets: memory leaks, uninitialized variables, resource management,
+#          stylistic consistency, and performance anti-patterns.
 # Applied in static_analysis.yml via compile_commands.json from CMake.
 Checks: >
     -*,
+    # C++ core guidelines / bug-prone patterns
     bugprone-*,
     -bugprone-easily-swappable-parameters,
     -bugprone-narrowing-conversions,
+    # Clang static analyzer (memory, null-deref, dead stores, leaks)
+    clang-analyzer-*,
+    -clang-analyzer-cplusplus*,          # C++ only, not applicable to pure C
+    -clang-analyzer-optin.cplusplus.VirtualCall,  # C++ only
+    # Portability
     portability-*,
     -portability-restrict-system-includes,
+    # Performance
     performance-*,
+    # Readability / style consistency
     readability-*,
     -readability-function-naming-comment,
     -readability-identifier-naming,
     -readability-uppercase-literal-suffix,
+    # Miscellaneous
     misc-*,
     -misc-const-correctness,
-    -misc-non-private-member-variables-in-classes
+    -misc-non-private-member-variables-in-classes,
+
+# Check-specific options
+CheckOptions:
+  - key:   readability-identifier-naming.const_variable_prefix
+    value: k
+  - key:   readability-identifier-naming.const_variable_case
+    value: lower
+  - key:   readability-identifier-naming.macro_prefix
+    value: CAN_
+  - key:   readability-identifier-naming.macro_case
+    value: UPPER_CASE
+  - key:   clang-analyzer-optin.unix.MallocChecker
+    value: AllAlloc
+  - key:   clang-analyzer-optin.unix.MallocChecker.MallocMinSize
+    value: 1
 
 WarningsAsErrors: ''
 HeaderFilterRegex: ''
+
 ...
