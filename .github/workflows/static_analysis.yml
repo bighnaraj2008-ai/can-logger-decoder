@@ -49,3 +49,40 @@ jobs:
             src/ \
             include/ \
             tests/
+
+  clang-tidy:
+    name: clang-tidy
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Install Dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y clang-tidy clang-16 cmake make build-essential
+
+      - name: Generate compile_commands.json
+        run: |
+          cmake -S . -B build -DCMAKE_EXPORT_COMPILE_COMMANDS=ON -DCMAKE_C_COMPILER=clang-16
+
+      - name: Run clang-tidy Static Analysis
+        run: |
+          clang-tidy \
+            -p build \
+            --warnings-as-errors=* \
+            src/core/*.c \
+            src/hardware/*.c \
+            src/network/*.c \
+            src/state/*.c \
+            src/utils/*.c \
+            src/dbc_decoder.c \
+            src/main.c \
+            include/*.h \
+            tests/*.c \
+            tests/**/*.c
+
+      - name: Clean Build Artifacts
+        if: always()
+        run: |
+          rm -rf build
