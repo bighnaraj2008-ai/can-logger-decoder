@@ -149,6 +149,15 @@ for f in "${DAY5_FILES[@]}"; do
 done
 echo -e "${GREEN}[PASS] All Day 5 benchmarking and utility artifacts verified.${NC}"
 
+echo "7. Verifying root governance files..."
+for f in "CONTRIBUTING.md" "SECURITY.md" "LICENSE"; do
+    if [[ ! -f "$f" ]]; then
+        echo -e "${RED}[FAIL] Missing root governance file: $f${NC}"
+        exit 1
+    fi
+done
+echo -e "${GREEN}[PASS] Root governance files verified.${NC}"
+
 echo -e "\n${CYAN}================================================================${NC}"
 echo -e "${GREEN}SMOKE TEST COMPLETED SUCCESSFULLY (EXIT 0)${NC}"
 echo -e "${CYAN}================================================================${NC}"
