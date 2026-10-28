@@ -1,3 +1,7 @@
+/*
+ * Linux SocketCAN Virtual Network Interface Mock Harness
+ * Emulates non-blocking ring buffer queues and synthetic automotive packet streams.
+ */
 #define _GNU_SOURCE
 #include <stdio.h>
 #include <stdlib.h>
