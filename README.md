@@ -20,16 +20,16 @@ When physical hardware or virtual network interfaces are not available (e.g. run
 
 Full Mermaid component, data-flow, sequence, and state-machine diagrams live in:
 
-- **`docs/ARCHITECTURE.mmd`** â€” System component architecture diagram
-- **`docs/STATE_MACHINE_DIAGRAM.mmd`** â€” Fault confinement FSM state diagram
+- **`docs/ARCHITECTURE.mmd`** Ã¢â‚¬â€ System component architecture diagram
+- **`docs/STATE_MACHINE_DIAGRAM.mmd`** Ã¢â‚¬â€ Fault confinement FSM state diagram
 
 ### Architecture Overview
 
 ```
                         +---------------------------+
                         |     Application Layer     |
-                        |  CLI â€¢ Dashboard â€¢ CSV    |
-                        |  DBC Decoder â€¢ Runtime    |
+                        |  CLI Ã¢â‚¬Â¢ Dashboard Ã¢â‚¬Â¢ CSV    |
+                        |  DBC Decoder Ã¢â‚¬Â¢ Runtime    |
                         |     Metrics & Logging     |
                         +-------------+-------------+
                                       |
@@ -89,7 +89,7 @@ Full Mermaid component, data-flow, sequence, and state-machine diagrams live in:
 
 - **GCC** or **Clang** (C99-compatible compiler)
 - **GNU Make** or **CMake 3.10+**
-- **Linux** (for SocketCAN support) â€” Windows/WSL and macOS use the mock telemetry fallback
+- **Linux** (for SocketCAN support) Ã¢â‚¬â€ Windows/WSL and macOS use the mock telemetry fallback
 - `libm` (math library, linked automatically on Unix)
 
 ### Build with Make
@@ -219,7 +219,7 @@ The benchmark reports frames-per-second (FPS) throughput and per-frame latency s
 
 ## Utility Scripts
 
-### `scripts/export_logs.sh` â€” CAN Log Export
+### `scripts/export_logs.sh` Ã¢â‚¬â€ CAN Log Export
 
 Export decoded CAN logs (CSV) into structured CSV or JSON archives for offline analysis.
 
@@ -231,7 +231,7 @@ Export decoded CAN logs (CSV) into structured CSV or JSON archives for offline a
 ./scripts/export_logs.sh can_log.csv --format json --archive --checksum --output ./exports/feb2026
 ```
 
-### `scripts/prune_buffer.sh` â€” Log Rotation & Buffer Cleanup
+### `scripts/prune_buffer.sh` Ã¢â‚¬â€ Log Rotation & Buffer Cleanup
 
 Manage log rotation and buffer cleanup on resource-constrained embedded nodes.
 
@@ -252,79 +252,79 @@ Manage log rotation and buffer cleanup on resource-constrained embedded nodes.
 
 ```text
 can-logger-decoder/
-â”œâ”€â”€ .clang-format              # Strict C formatting standard (LLVM-based)
-â”œâ”€â”€ .clang-tidy                # Static analysis check set
-â”œâ”€â”€ .gitignore                 # Build artifact, log, and IDE exclusion rules
-â”œâ”€â”€ CMakeLists.txt             # CMake build configuration
-â”œâ”€â”€ Makefile                   # GNU Make build configuration
-â”œâ”€â”€ CHANGELOG.md               # Release changelog (Keep a Changelog format)
-â”œâ”€â”€ LICENSE                    # MIT license
-â”œâ”€â”€ README.md                  # This file
-â”œâ”€â”€ sample.dbc                 # Sample Vector DBC database
-â”œâ”€â”€ .github/
-â”‚   â””â”€â”€ workflows/
-â”‚       â”œâ”€â”€ ci_build.yml       # Multi-compiler CI build matrix (GCC/Clang)
-â”‚       â”œâ”€â”€ static_analysis.yml # cppcheck + clang-tidy on PRs
-â”‚       â”œâ”€â”€ release_artifacts.yml # Tagged-release cross-compile & packaging
-â”‚       â”œâ”€â”€ ci.yml             # Legacy CI build & test workflow
-â”‚       â”œâ”€â”€ docs_check.yml     # Documentation integrity check
-â”‚       â””â”€â”€ test_coverage.yml  # Test coverage workflow
-â”œâ”€â”€ docs/
-â”‚   â”œâ”€â”€ CI_CD_PIPELINE.md      # CI/CD pipeline architecture guide
-â”‚   â”œâ”€â”€ ARCHITECTURE.mmd       # Mermaid system architecture diagram
-â”‚   â”œâ”€â”€ STATE_MACHINE_DIAGRAM.mmd # Mermaid FSM state diagram
-â”‚   â”œâ”€â”€ API_REFERENCE.md       # C library API reference
-â”‚   â”œâ”€â”€ CONTRIBUTORS_GUIDE.md  # Contribution standards and conventions
-â”‚   â””â”€â”€ ... (additional technical guides)
-â”œâ”€â”€ include/
-â”‚   â”œâ”€â”€ can_core.h             # Core CAN frame/message types and constants
-â”‚   â”œâ”€â”€ can_parser.h           # CAN bus acquisition API
-â”‚   â”œâ”€â”€ can_filters.h          # CAN acceptance filter definitions
-â”‚   â”œâ”€â”€ dbc_decoder.h          # Vector DBC database parser/decoder API
-â”‚   â”œâ”€â”€ error_codes.h          # Canonical error codes (can_error_t)
-â”‚   â”œâ”€â”€ mcp2515.h              # MCP2515 SPI hardware driver API
-â”‚   â”œâ”€â”€ test_config.h          # Test configuration
-â”‚   â””â”€â”€ vcan_interface.h       # Virtual CAN SocketCAN interface API
-â”œâ”€â”€ src/
-â”‚   â”œâ”€â”€ can_parser.c           # CAN bus initialization and frame reading
-â”‚   â”œâ”€â”€ dbc_decoder.c          # DBC file parsing and signal decoding
-â”‚   â”œâ”€â”€ main.c                 # CLI entry point and acquisition loop
-â”‚   â”œâ”€â”€ test_decoder.c         # Decoder test harness
-â”‚   â”œâ”€â”€ core/                  # Core library sources (frames, parser, router, DLC, CRC)
-â”‚   â”œâ”€â”€ hardware/              # MCP2515 SPI driver sources
-â”‚   â”œâ”€â”€ network/               # SocketCAN virtual interface sources
-â”‚   â”œâ”€â”€ state/                 # Error confinement and bus-off recovery FSM
-â”‚   â””â”€â”€ utils/                 # CRC, logger, metrics utilities
-â”œâ”€â”€ scripts/
-â”‚   â”œâ”€â”€ benchmark_decoder.sh   # Legacy shell-based throughput benchmark
-â”‚   â”œâ”€â”€ check_formatting.sh    # Local clang-format verification
-â”‚   â”œâ”€â”€ clean_test_artifacts.sh # Test artifact cleanup
-â”‚   â”œâ”€â”€ export_logs.sh         # CAN log CSV/JSON export utility
-â”‚   â”œâ”€â”€ generate_test_report.sh # Test report generation
-â”‚   â”œâ”€â”€ prune_buffer.sh        # Log rotation and buffer cleanup utility
-â”‚   â”œâ”€â”€ run_linter.sh          # Local static analysis runner (cppcheck + clang-tidy)
-â”‚   â”œâ”€â”€ run_unit_tests.sh      # Automated unit test runner
-â”‚   â”œâ”€â”€ run_valgrind.sh        # Valgrind memory leak checker
-â”‚   â”œâ”€â”€ smoke_test.sh          # CLI smoke test
-â”‚   â”œâ”€â”€ validate_docs.py       # Documentation link validator
-â”‚   â””â”€â”€ validate_fixtures.sh   # Test fixture checksum validator
-â”œâ”€â”€ tests/
-â”‚   â”œâ”€â”€ benchmarks/
-â”‚   â”‚   â””â”€â”€ bench_decoder.c    # Throughput & latency benchmark harness
-â”‚   â”œâ”€â”€ edge_cases/            # Edge-case test suites
-â”‚   â”œâ”€â”€ fixtures/              # Test fixtures (raw frames, corrupted, extended, bus-off)
-â”‚   â”œâ”€â”€ harness/               # Mock SPI and virtual socket simulators
-â”‚   â”œâ”€â”€ integration/           # Integration tests (MCP2515 loopback, vcan bridge)
-â”‚   â”œâ”€â”€ memory/                # Memory leak sanitizer tests
-â”‚   â”œâ”€â”€ performance/           # Performance tests
-â”‚   â”œâ”€â”€ stress/                # Stress tests (CAN storm)
-â”‚   â”œâ”€â”€ linter/                # Style compliance tests
-â”‚   â”œâ”€â”€ test_*.c               # Unit test suites (6 core suites)
-â”‚   â””â”€â”€ ... (additional test files)
-â””â”€â”€ examples/
-    â”œâ”€â”€ sample_telemetry_log.json   # Sample decoded telemetry export
-    â”œâ”€â”€ custom_fixture_generator.py # Custom test fixture generator
-    â””â”€â”€ wiring_schematic.ascii      # ASCII wiring schematic
+Ã¢â€Å“Ã¢â€â‚¬Ã¢â€â‚¬ .clang-format              # Strict C formatting standard (LLVM-based)
+Ã¢â€Å“Ã¢â€â‚¬Ã¢â€â‚¬ .clang-tidy                # Static analysis check set
+Ã¢â€Å“Ã¢â€â‚¬Ã¢â€â‚¬ .gitignore                 # Build artifact, log, and IDE exclusion rules
+Ã¢â€Å“Ã¢â€â‚¬Ã¢â€â‚¬ CMakeLists.txt             # CMake build configuration
+Ã¢â€Å“Ã¢â€â‚¬Ã¢â€â‚¬ Makefile                   # GNU Make build configuration
+Ã¢â€Å“Ã¢â€â‚¬Ã¢â€â‚¬ CHANGELOG.md               # Release changelog (Keep a Changelog format)
+Ã¢â€Å“Ã¢â€â‚¬Ã¢â€â‚¬ LICENSE                    # MIT license
+Ã¢â€Å“Ã¢â€â‚¬Ã¢â€â‚¬ README.md                  # This file
+Ã¢â€Å“Ã¢â€â‚¬Ã¢â€â‚¬ sample.dbc                 # Sample Vector DBC database
+Ã¢â€Å“Ã¢â€â‚¬Ã¢â€â‚¬ .github/
+Ã¢â€â€š   Ã¢â€â€Ã¢â€â‚¬Ã¢â€â‚¬ workflows/
+Ã¢â€â€š       Ã¢â€Å“Ã¢â€â‚¬Ã¢â€â‚¬ ci_build.yml       # Multi-compiler CI build matrix (GCC/Clang)
+Ã¢â€â€š       Ã¢â€Å“Ã¢â€â‚¬Ã¢â€â‚¬ static_analysis.yml # cppcheck + clang-tidy on PRs
+Ã¢â€â€š       Ã¢â€Å“Ã¢â€â‚¬Ã¢â€â‚¬ release_artifacts.yml # Tagged-release cross-compile & packaging
+Ã¢â€â€š       Ã¢â€Å“Ã¢â€â‚¬Ã¢â€â‚¬ ci.yml             # Legacy CI build & test workflow
+Ã¢â€â€š       Ã¢â€Å“Ã¢â€â‚¬Ã¢â€â‚¬ docs_check.yml     # Documentation integrity check
+Ã¢â€â€š       Ã¢â€â€Ã¢â€â‚¬Ã¢â€â‚¬ test_coverage.yml  # Test coverage workflow
+Ã¢â€Å“Ã¢â€â‚¬Ã¢â€â‚¬ docs/
+Ã¢â€â€š   Ã¢â€Å“Ã¢â€â‚¬Ã¢â€â‚¬ CI_CD_PIPELINE.md      # CI/CD pipeline architecture guide
+Ã¢â€â€š   Ã¢â€Å“Ã¢â€â‚¬Ã¢â€â‚¬ ARCHITECTURE.mmd       # Mermaid system architecture diagram
+Ã¢â€â€š   Ã¢â€Å“Ã¢â€â‚¬Ã¢â€â‚¬ STATE_MACHINE_DIAGRAM.mmd # Mermaid FSM state diagram
+Ã¢â€â€š   Ã¢â€Å“Ã¢â€â‚¬Ã¢â€â‚¬ API_REFERENCE.md       # C library API reference
+Ã¢â€â€š   Ã¢â€Å“Ã¢â€â‚¬Ã¢â€â‚¬ CONTRIBUTORS_GUIDE.md  # Contribution standards and conventions
+Ã¢â€â€š   Ã¢â€â€Ã¢â€â‚¬Ã¢â€â‚¬ ... (additional technical guides)
+Ã¢â€Å“Ã¢â€â‚¬Ã¢â€â‚¬ include/
+Ã¢â€â€š   Ã¢â€Å“Ã¢â€â‚¬Ã¢â€â‚¬ can_core.h             # Core CAN frame/message types and constants
+Ã¢â€â€š   Ã¢â€Å“Ã¢â€â‚¬Ã¢â€â‚¬ can_parser.h           # CAN bus acquisition API
+Ã¢â€â€š   Ã¢â€Å“Ã¢â€â‚¬Ã¢â€â‚¬ can_filters.h          # CAN acceptance filter definitions
+Ã¢â€â€š   Ã¢â€Å“Ã¢â€â‚¬Ã¢â€â‚¬ dbc_decoder.h          # Vector DBC database parser/decoder API
+Ã¢â€â€š   Ã¢â€Å“Ã¢â€â‚¬Ã¢â€â‚¬ error_codes.h          # Canonical error codes (can_error_t)
+Ã¢â€â€š   Ã¢â€Å“Ã¢â€â‚¬Ã¢â€â‚¬ mcp2515.h              # MCP2515 SPI hardware driver API
+Ã¢â€â€š   Ã¢â€Å“Ã¢â€â‚¬Ã¢â€â‚¬ test_config.h          # Test configuration
+Ã¢â€â€š   Ã¢â€â€Ã¢â€â‚¬Ã¢â€â‚¬ vcan_interface.h       # Virtual CAN SocketCAN interface API
+Ã¢â€Å“Ã¢â€â‚¬Ã¢â€â‚¬ src/
+Ã¢â€â€š   Ã¢â€Å“Ã¢â€â‚¬Ã¢â€â‚¬ can_parser.c           # CAN bus initialization and frame reading
+Ã¢â€â€š   Ã¢â€Å“Ã¢â€â‚¬Ã¢â€â‚¬ dbc_decoder.c          # DBC file parsing and signal decoding
+Ã¢â€â€š   Ã¢â€Å“Ã¢â€â‚¬Ã¢â€â‚¬ main.c                 # CLI entry point and acquisition loop
+Ã¢â€â€š   Ã¢â€Å“Ã¢â€â‚¬Ã¢â€â‚¬ test_decoder.c         # Decoder test harness
+Ã¢â€â€š   Ã¢â€Å“Ã¢â€â‚¬Ã¢â€â‚¬ core/                  # Core library sources (frames, parser, router, DLC, CRC)
+Ã¢â€â€š   Ã¢â€Å“Ã¢â€â‚¬Ã¢â€â‚¬ hardware/              # MCP2515 SPI driver sources
+Ã¢â€â€š   Ã¢â€Å“Ã¢â€â‚¬Ã¢â€â‚¬ network/               # SocketCAN virtual interface sources
+Ã¢â€â€š   Ã¢â€Å“Ã¢â€â‚¬Ã¢â€â‚¬ state/                 # Error confinement and bus-off recovery FSM
+Ã¢â€â€š   Ã¢â€â€Ã¢â€â‚¬Ã¢â€â‚¬ utils/                 # CRC, logger, metrics utilities
+Ã¢â€Å“Ã¢â€â‚¬Ã¢â€â‚¬ scripts/
+Ã¢â€â€š   Ã¢â€Å“Ã¢â€â‚¬Ã¢â€â‚¬ benchmark_decoder.sh   # Legacy shell-based throughput benchmark
+Ã¢â€â€š   Ã¢â€Å“Ã¢â€â‚¬Ã¢â€â‚¬ check_formatting.sh    # Local clang-format verification
+Ã¢â€â€š   Ã¢â€Å“Ã¢â€â‚¬Ã¢â€â‚¬ clean_test_artifacts.sh # Test artifact cleanup
+Ã¢â€â€š   Ã¢â€Å“Ã¢â€â‚¬Ã¢â€â‚¬ export_logs.sh         # CAN log CSV/JSON export utility
+Ã¢â€â€š   Ã¢â€Å“Ã¢â€â‚¬Ã¢â€â‚¬ generate_test_report.sh # Test report generation
+Ã¢â€â€š   Ã¢â€Å“Ã¢â€â‚¬Ã¢â€â‚¬ prune_buffer.sh        # Log rotation and buffer cleanup utility
+Ã¢â€â€š   Ã¢â€Å“Ã¢â€â‚¬Ã¢â€â‚¬ run_linter.sh          # Local static analysis runner (cppcheck + clang-tidy)
+Ã¢â€â€š   Ã¢â€Å“Ã¢â€â‚¬Ã¢â€â‚¬ run_unit_tests.sh      # Automated unit test runner
+Ã¢â€â€š   Ã¢â€Å“Ã¢â€â‚¬Ã¢â€â‚¬ run_valgrind.sh        # Valgrind memory leak checker
+Ã¢â€â€š   Ã¢â€Å“Ã¢â€â‚¬Ã¢â€â‚¬ smoke_test.sh          # CLI smoke test
+Ã¢â€â€š   Ã¢â€Å“Ã¢â€â‚¬Ã¢â€â‚¬ validate_docs.py       # Documentation link validator
+Ã¢â€â€š   Ã¢â€â€Ã¢â€â‚¬Ã¢â€â‚¬ validate_fixtures.sh   # Test fixture checksum validator
+Ã¢â€Å“Ã¢â€â‚¬Ã¢â€â‚¬ tests/
+Ã¢â€â€š   Ã¢â€Å“Ã¢â€â‚¬Ã¢â€â‚¬ benchmarks/
+Ã¢â€â€š   Ã¢â€â€š   Ã¢â€â€Ã¢â€â‚¬Ã¢â€â‚¬ bench_decoder.c    # Throughput & latency benchmark harness
+Ã¢â€â€š   Ã¢â€Å“Ã¢â€â‚¬Ã¢â€â‚¬ edge_cases/            # Edge-case test suites
+Ã¢â€â€š   Ã¢â€Å“Ã¢â€â‚¬Ã¢â€â‚¬ fixtures/              # Test fixtures (raw frames, corrupted, extended, bus-off)
+Ã¢â€â€š   Ã¢â€Å“Ã¢â€â‚¬Ã¢â€â‚¬ harness/               # Mock SPI and virtual socket simulators
+Ã¢â€â€š   Ã¢â€Å“Ã¢â€â‚¬Ã¢â€â‚¬ integration/           # Integration tests (MCP2515 loopback, vcan bridge)
+Ã¢â€â€š   Ã¢â€Å“Ã¢â€â‚¬Ã¢â€â‚¬ memory/                # Memory leak sanitizer tests
+Ã¢â€â€š   Ã¢â€Å“Ã¢â€â‚¬Ã¢â€â‚¬ performance/           # Performance tests
+Ã¢â€â€š   Ã¢â€Å“Ã¢â€â‚¬Ã¢â€â‚¬ stress/                # Stress tests (CAN storm)
+Ã¢â€â€š   Ã¢â€Å“Ã¢â€â‚¬Ã¢â€â‚¬ linter/                # Style compliance tests
+Ã¢â€â€š   Ã¢â€Å“Ã¢â€â‚¬Ã¢â€â‚¬ test_*.c               # Unit test suites (6 core suites)
+Ã¢â€â€š   Ã¢â€â€Ã¢â€â‚¬Ã¢â€â‚¬ ... (additional test files)
+Ã¢â€â€Ã¢â€â‚¬Ã¢â€â‚¬ examples/
+    Ã¢â€Å“Ã¢â€â‚¬Ã¢â€â‚¬ sample_telemetry_log.json   # Sample decoded telemetry export
+    Ã¢â€Å“Ã¢â€â‚¬Ã¢â€â‚¬ custom_fixture_generator.py # Custom test fixture generator
+    Ã¢â€â€Ã¢â€â‚¬Ã¢â€â‚¬ wiring_schematic.ascii      # ASCII wiring schematic
 ```
 
 ---
