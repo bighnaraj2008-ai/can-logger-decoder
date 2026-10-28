@@ -1,4 +1,4 @@
-# Changelog â€” can-logger-decoder
+# Changelog Ã¢â‚¬â€ can-logger-decoder
 
 All notable changes to the `can-logger-decoder` automotive telemetry parser and embedded logging suite are documented in this file.
 
@@ -7,7 +7,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
-## [2.1.0] - 2026-10-27 Ã¢â‚¬â€ Day 4 CI/CD & Linting Automation Sprint
+## [1.0.0] - 2026-10-28 â€” Initial Production Release
+
+### Added
+- Complete Classical CAN 2.0A (11-bit) and 2.0B (29-bit) logger and real-time decoder.
+- Hardware SPI driver for Microchip MCP2515 controller.
+- Native Linux SocketCAN support with automatic vehicle physics fallback.
+- Vector DBC signal decoding into physical engineering units.
+- 50-commit validated test suites, CI/CD pipelines, and benchmarking suites.
+
+---
+## [2.1.0] - 2026-10-27 ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â Day 4 CI/CD & Linting Automation Sprint
 
 ### Added
 - **Full CI/CD Automation Suite**: 50 atomic commits implementing comprehensive GitHub Actions workflows, static analysis, cross-compilation packaging, and linter enforcement.
@@ -41,19 +51,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - CI/CD troubleshooting runbook (`docs/TROUBLESHOOTING_CI.md`).
 
 ---
-## [2.0.0] - 2026-10-26 â€” Day 3 Advanced Documentation Sprint
+## [2.0.0] - 2026-10-26 Ã¢â‚¬â€ Day 3 Advanced Documentation Sprint
 
 ### Added
 - **Hardware Integration Guide** (`docs/HARDWARE_SETUP.md`):
   - Complete MCP2515 pinout mapping for Arduino, ESP32, Raspberry Pi, and STM32 platforms.
   - SPI Mode 0,0 and Mode 1,1 timing specifications and chip-select setup/hold parameters.
-  - Electrical power supply, 3.3V logic level shifting, decoupling, and 120 Î© bus termination.
+  - Electrical power supply, 3.3V logic level shifting, decoupling, and 120 ÃŽÂ© bus termination.
   - Crystal oscillator selection (8.000 MHz vs 16.000 MHz) and bit-timing prescaler calculations.
 - **Protocol & Wire-Format Specification** (`docs/PROTOCOL_SPEC.md`):
   - In-depth CAN 2.0A (11-bit standard) and CAN 2.0B (29-bit extended) identifier specifications.
   - SocketCAN flag extraction (`CAN_EFF_FLAG`, `CAN_RTR_FLAG`, `CAN_ERR_FLAG`).
   - Classical CAN wire frame layout (SOF, Arbitration, Control, Data, CRC-15, ACK, EOF, IFS).
-  - Strict Data Length Code (DLC) bounds (0â€“8 bytes) and rejection rules.
+  - Strict Data Length Code (DLC) bounds (0Ã¢â‚¬â€œ8 bytes) and rejection rules.
   - Vector DBC signal unpacking: Intel Little-Endian vs Motorola Big-Endian, two's complement signed signals, linear scaling formulas.
 - **Mermaid System Architecture Visualizations** (`docs/ARCHITECTURE.mmd`):
   - Component architecture diagram decomposing PHY, Host Controller, Application Layer, and Outputs.
@@ -89,7 +99,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
-## [1.5.0] - 2026-10-25 â€” Day 2 Test Coverage Sprint
+## [1.5.0] - 2026-10-25 Ã¢â‚¬â€ Day 2 Test Coverage Sprint
 
 ### Added
 - Test fixtures catalog (`tests/fixtures/`): raw binary frames, corrupted hex frames, extended frames, and bus-off sequence.
@@ -99,7 +109,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
-## [1.0.0] - 2026-10-24 â€” Day 1 Architectural Layering Sprint
+## [1.0.0] - 2026-10-24 Ã¢â‚¬â€ Day 1 Architectural Layering Sprint
 
 ### Added
 - Modular architectural decoupling into Core, Hardware, Network, and State layers.
