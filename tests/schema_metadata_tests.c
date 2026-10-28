@@ -42,12 +42,19 @@ static int test_can_core_constants_and_types(void) {
     return 0;
 }
 
+static int test_benchmarking_and_release_constants(void) {
+    printf("\n=== Running Release & Benchmarking Metadata Tests ===\n");
+    TEST_ASSERT(CAN_CORE_VERSION_MAJOR >= 1, "Major version is at least 1");
+    TEST_ASSERT(CAN_MAX_DATA_BYTES == 8 || CAN_FRAME_MAX_DATA_LEN == 8, "Max frame payload is 8 bytes");
+    return 0;
+}
 int main(void) {
     printf("====================================================\n");
     printf(" CAN LOGGER & DECODER SCHEMA & METADATA TEST SUITE  \n");
     printf("====================================================\n");
 
     int failed = test_can_core_constants_and_types();
+    failed += test_benchmarking_and_release_constants();
 
     printf("\n====================================================\n");
     if (failed == 0) {
