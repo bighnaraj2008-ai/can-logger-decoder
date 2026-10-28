@@ -130,6 +130,25 @@ for f in "${DAY4_FILES[@]}"; do
 done
 echo -e "${GREEN}[PASS] All Day 4 CI/CD and automation artifacts verified.${NC}"
 
+echo -e "\n6. Verifying Day 5 benchmarking suites and utility tools..."
+DAY5_FILES=(
+    "tests/benchmarks/bench_decoder.c"
+    "tests/benchmarks/bench_memory.c"
+    "scripts/export_logs.sh"
+    "scripts/prune_buffer.sh"
+    "scripts/generate_telemetry_report.sh"
+    "docs/BENCHMARK_RESULTS.md"
+    "docs/PRODUCTION_CHECKLIST.md"
+)
+
+for f in "${DAY5_FILES[@]}"; do
+    if [[ ! -f "$f" ]]; then
+        echo -e "${RED}[FAIL] Missing Day 5 file: $f${NC}"
+        exit 1
+    fi
+done
+echo -e "${GREEN}[PASS] All Day 5 benchmarking and utility artifacts verified.${NC}"
+
 echo -e "\n${CYAN}================================================================${NC}"
 echo -e "${GREEN}SMOKE TEST COMPLETED SUCCESSFULLY (EXIT 0)${NC}"
 echo -e "${CYAN}================================================================${NC}"
