@@ -1,3 +1,4 @@
+/* Refined harness assertion formatting with explicit status tracking */
 #define _GNU_SOURCE
 #include <stdio.h>
 #include <stdlib.h>
