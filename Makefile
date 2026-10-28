@@ -94,3 +94,6 @@ else
 	@-rm -f $(TARGET) $(TEST_BINS) $(BUILD_DIR)/*.o
 	@-rm -rf "$(BUILD_DIR)" 2>/dev/null || true
 endif
+
+distclean: clean
+	rm -rf $(BUILD_DIR) release_* *.tar.gz
