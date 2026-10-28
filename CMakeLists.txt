@@ -59,3 +59,9 @@ foreach(TEST_NAME ${TEST_SUITES})
     target_link_libraries(${TEST_NAME} can_core_lib)
     add_test(NAME ${TEST_NAME} COMMAND ${TEST_NAME})
 endforeach()
+
+
+# Installation configuration
+include(GNUInstallDirs)
+install(TARGETS can_decoder RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR})
+install(FILES sample.dbc DESTINATION ${CMAKE_INSTALL_DATADIR}/can_logger_decoder)
