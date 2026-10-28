@@ -1,3 +1,4 @@
+/* Optimized buffer transfer: minimizes SPI bus roundtrips via sequential bursting */
 #define _GNU_SOURCE
 #include "mcp2515.h"
 
