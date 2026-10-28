@@ -1,3 +1,8 @@
+/**
+ * @file can_core.h
+ * @brief Core CAN definitions, frame representations, and wire formatting primitives.
+ * High-performance, zero-allocation C99/GNU99 automotive telemetry foundation.
+ */
 #ifndef CAN_CORE_H
 #define CAN_CORE_H
 
