@@ -1,13 +1,13 @@
 #!/usr/bin/env bash
 #
-# health_check.sh â€” CI environment diagnostic health check script
+# health_check.sh Ã¢â‚¬â€ CI environment diagnostic health check script
 #
 set -euo pipefail
 
 REPO_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 
 echo "================================================================"
-echo " can-logger-decoder â€” Environment Diagnostic Health Check"
+echo " can-logger-decoder Ã¢â‚¬â€ Environment Diagnostic Health Check"
 echo "================================================================"
 echo "Host OS: $(uname -s 2>/dev/null || echo "Windows/Other")"
 echo "Date: $(date 2>/dev/null || echo "N/A")"
@@ -39,4 +39,12 @@ test -f "${REPO_ROOT}/.clang-format" && echo "  [PASS] .clang-format present"
 test -f "${REPO_ROOT}/.clang-tidy" && echo "  [PASS] .clang-tidy present"
 
 echo ""
+
+echo "4. Checking Storage & File Permissions..."
+if [ -w "." ]; then
+  echo "  [PASS] Current working directory is writable"
+else
+  echo "  [FAIL] Directory write permission denied"
+fi
+
 echo "Environment diagnostic check completed."
