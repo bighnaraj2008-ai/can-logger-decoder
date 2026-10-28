@@ -1,4 +1,4 @@
-﻿name: Documentation Integrity & Link Check
+name: Documentation Integrity & Link Check
 
 on:
   push:
@@ -21,7 +21,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Repository
-        uses: actions/checkout@v3
+        uses: actions/checkout@v7
 
       - name: Set up Python
         uses: actions/setup-python@v4
