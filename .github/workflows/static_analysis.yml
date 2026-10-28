@@ -46,6 +46,7 @@ jobs:
             --language=c \
             --quiet \
             --error-exitcode=1 \
+            --inline-suppr \
             src/ \
             include/ \
             tests/
