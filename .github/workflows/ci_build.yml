@@ -50,7 +50,7 @@ jobs:
       - name: Compile (${{ matrix.compiler }} ${{ matrix.compiler-version }})
         run: |
           make clean
-          make CC=${{ env.CC }} all
+          make -j$(nproc) CC=${{ env.CC }} all
 
       - name: Run Unit Test Suites (${{ matrix.compiler }} ${{ matrix.compiler-version }})
         run: |
