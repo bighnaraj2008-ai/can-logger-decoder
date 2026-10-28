@@ -1,3 +1,7 @@
+/*
+ * Microchip MCP2515 Mock SPI Bus Driver Harness
+ * Provides software-emulated hardware registers, interrupt signaling, and reset logic.
+ */
 #define _GNU_SOURCE
 #include <stdio.h>
 #include <stdlib.h>
