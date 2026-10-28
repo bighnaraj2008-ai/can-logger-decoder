@@ -1,0 +1,32 @@
+name: Performance Benchmarks
+
+on:
+  push:
+    branches: [ main, master ]
+  pull_request:
+    branches: [ main, master ]
+
+concurrency:
+  group: benchmarks-${{ github.head_ref || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  benchmark:
+    name: Throughput & Latency Regression Test
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Install Build Tools
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y gcc make cmake
+
+      - name: Build Benchmark Harness
+        run: |
+          make bench
+
+      - name: Execute Frame Decoding Benchmark
+        run: |
+          ./build/bench_decoder --frames 100000 --rate 20000
