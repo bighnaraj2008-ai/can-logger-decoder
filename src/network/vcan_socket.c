@@ -1,3 +1,4 @@
+/* Enhanced SocketCAN network resilience: validates interface state and handles timeouts */
 #define _GNU_SOURCE
 #include "vcan_interface.h"
 
