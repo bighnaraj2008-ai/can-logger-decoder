@@ -9,6 +9,10 @@
 #include <string.h>
 #include <time.h>
 #include <unistd.h>
+#ifndef likely
+#define likely(x)   __builtin_expect(!!(x), 1)
+#define unlikely(x) __builtin_expect(!!(x), 0)
+#endif
 
 #ifndef CAN_HAS_SOCKETCAN
 #define CAN_HAS_SOCKETCAN VCAN_HAS_SOCKETCAN
