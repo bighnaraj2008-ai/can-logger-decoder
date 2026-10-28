@@ -1,4 +1,4 @@
-﻿# Automotive Networking & CAN Bus Glossary
+# Automotive Networking & CAN Bus Glossary
 
 `can-logger-decoder` v2.0.0 · Day 3 Automotive Reference
 
@@ -50,3 +50,10 @@ A comprehensive technical glossary of terms, protocols, and acronyms used across
 
 ### V
 - **vcan**: Virtual CAN driver in Linux allowing loopback and network testing without physical hardware.
+
+
+### F
+- **FPS (Frames Per Second)**: Ingestion and decoding throughput metric measuring real-time message handling capacity under synthetic bus saturation.
+
+### Z
+- **Zero-Copy Architecture**: Processing technique where CAN payload bytes are referenced or copied directly to final structures without intermediate scratch allocations.
