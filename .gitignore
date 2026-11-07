@@ -3,6 +3,10 @@ can_decoder
 can_decoder.exe
 test_suite
 test_suite.exe
+bench_decoder
+bench_decoder.exe
+build/bench_*
+exported_logs/
 
 # Object files and build artifacts
 *.o

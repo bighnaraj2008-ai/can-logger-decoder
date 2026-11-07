@@ -38,6 +38,8 @@ extern "C" {
 #define CAN_DLC_MIN               0u   /**< Minimum valid DLC (0 data bytes) */
 #define CAN_DLC_MAX               8u   /**< Maximum valid DLC for classical CAN */
 #define CAN_FRAME_MAX_DATA_LEN    8u   /**< Physical payload buffer size in bytes */
+#define CAN_FRAME_DATA_LEN        CAN_FRAME_MAX_DATA_LEN /**< Alias for maximum payload length */
+#define CAN_MAX_DATA_LEN          CAN_FRAME_MAX_DATA_LEN /**< Alias for maximum payload length */
 #define CAN_TIMESTAMP_ISO_LEN    64u   /**< Size of ISO-8601 timestamp buffers */
 
 /* ----------------------------------------------------------------------

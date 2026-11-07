@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 #
-# check_formatting.sh â€” Local clang-format verification helper for can-logger-decoder (Day 4)
+# check_formatting.sh — Local clang-format verification helper for can-logger-decoder (Day 4)
 #
 # Runs clang-format in dry-run mode over src/, include/, and tests/.
 # Exits non-zero if any file does not conform to .clang-format.
@@ -19,7 +19,7 @@ SRC_GLOBS=(
 STATUS=0
 
 echo "================================================================"
-echo " can-logger-decoder â€” Format Check (clang-format --dry-run)"
+echo " can-logger-decoder — Format Check (clang-format --dry-run)"
 echo "================================================================"
 echo "Repo root: ${REPO_ROOT}"
 echo ""
@@ -74,7 +74,7 @@ if [ "${STATUS}" -eq 0 ]; then
   exit 0
 else
   echo "================================================================"
-  echo "  Formatting check FAILED â€” run: clang-format -i <files>"
+  echo "  Formatting check FAILED — run: clang-format -i <files>"
   echo "================================================================"
   exit 1
 fi

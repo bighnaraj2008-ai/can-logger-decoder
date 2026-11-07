@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 #
-# clean_cache.sh â€” Workflow cache and build object cleaning utility
+# clean_cache.sh — Workflow cache and build object cleaning utility
 #
 set -euo pipefail
 

@@ -1,13 +1,13 @@
 #!/usr/bin/env bash
 #
-# test_style_compliance.sh â€” Automated style compliance test runner
+# test_style_compliance.sh — Automated style compliance test runner
 #
 set -euo pipefail
 
 REPO_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
 
 echo "================================================================"
-echo " can-logger-decoder â€” Style & Whitespace Compliance Test"
+echo " can-logger-decoder — Style & Whitespace Compliance Test"
 echo "================================================================"
 
 FAILURES=0

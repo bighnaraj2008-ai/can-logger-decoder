@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 #
-# run_linter.sh â€” Local static analysis helper for can-logger-decoder (Day 4)
+# run_linter.sh — Local static analysis helper for can-logger-decoder (Day 4)
 #
 # Runs cppcheck and clang-tidy against src/, include/, and tests/ so
 # developers can verify code before committing. Gracefully skips tools
@@ -14,13 +14,13 @@ SRC_DIRS=(src include tests)
 STATUS=0
 
 echo "================================================================"
-echo " can-logger-decoder â€” Local Linter (cppcheck + clang-tidy)"
+echo " can-logger-decoder — Local Linter (cppcheck + clang-tidy)"
 echo "================================================================"
 echo "Repo root: ${REPO_ROOT}"
 echo ""
 
 # ---------------------------------------------------------------------------
-# cppcheck â€” catches memory leaks, uninitialized vars, null derefs, etc.
+# cppcheck — catches memory leaks, uninitialized vars, null derefs, etc.
 # ---------------------------------------------------------------------------
 if command -v cppcheck >/dev/null 2>&1; then
   echo "[1/2] Running cppcheck (static analysis)..."
@@ -53,17 +53,17 @@ if command -v cppcheck >/dev/null 2>&1; then
   fi
   echo ""
 else
-  echo "[1/2] cppcheck not installed â€” skipping (install: sudo apt-get install cppcheck)"
+  echo "[1/2] cppcheck not installed — skipping (install: sudo apt-get install cppcheck)"
   echo ""
 fi
 
 # ---------------------------------------------------------------------------
-# clang-tidy â€” needs compile_commands.json; skips gracefully if missing.
+# clang-tidy — needs compile_commands.json; skips gracefully if missing.
 # ---------------------------------------------------------------------------
 if command -v clang-tidy >/dev/null 2>&1; then
   echo "[2/2] Running clang-tidy (static analysis)..."
   if [ ! -f "${REPO_ROOT}/build/compile_commands.json" ] && [ ! -f "${REPO_ROOT}/compile_commands.json" ]; then
-    echo "  compile_commands.json not found â€” generating via CMake..."
+    echo "  compile_commands.json not found — generating via CMake..."
     cmake -S "${REPO_ROOT}" -B "${REPO_ROOT}/build" \
       -DCMAKE_EXPORT_COMPILE_COMMANDS=ON \
       -DCMAKE_C_COMPILER=clang \
@@ -92,7 +92,7 @@ if command -v clang-tidy >/dev/null 2>&1; then
   fi
   echo ""
 else
-  echo "[2/2] clang-tidy not installed â€” skipping (install: sudo apt-get install clang-tidy clang-16)"
+  echo "[2/2] clang-tidy not installed — skipping (install: sudo apt-get install clang-tidy clang-16)"
   echo ""
 fi
 

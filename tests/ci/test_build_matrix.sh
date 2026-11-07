@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 #
-# test_build_matrix.sh â€” Local multi-compiler build matrix verification
+# test_build_matrix.sh — Local multi-compiler build matrix verification
 #
 set -euo pipefail
 
@@ -8,7 +8,7 @@ REPO_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
 cd "${REPO_ROOT}"
 
 echo "================================================================"
-echo " can-logger-decoder â€” Local Build Matrix Verification"
+echo " can-logger-decoder — Local Build Matrix Verification"
 echo "================================================================"
 
 COMPILERS=("gcc" "clang")

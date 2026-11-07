@@ -1,11 +1,11 @@
 #!/usr/bin/env bash
 #
-# vcan_bridge_demo.sh â€” Virtual SocketCAN Bridging Demonstration
+# vcan_bridge_demo.sh — Virtual SocketCAN Bridging Demonstration
 #
 set -euo pipefail
 
 echo "================================================================"
-echo " CAN Logger Decoder â€” Virtual Socket Bridging Demonstration     "
+echo " CAN Logger Decoder — Virtual Socket Bridging Demonstration     "
 echo "================================================================"
 
 if [ "$(uname -s)" != "Linux" ]; then

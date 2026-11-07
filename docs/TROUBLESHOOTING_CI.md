@@ -1,4 +1,4 @@
-# Troubleshooting Guide for Failing CI/CD Builds â€” can-logger-decoder (Day 4)
+# Troubleshooting Guide for Failing CI/CD Builds — can-logger-decoder (Day 4)
 
 This runbook helps developers diagnose and resolve failures in GitHub Actions
 workflows and static analysis runs.

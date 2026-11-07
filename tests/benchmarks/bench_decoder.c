@@ -183,7 +183,7 @@ int main(int argc, char *argv[]) {
     if (cfg.dbc_path) {
         dbc = dbc_load_file(cfg.dbc_path);
         if (!dbc) {
-            fprintf(stderr, "Warning: could not load DBC '%s' â€” running raw-frame benchmark\n",
+            fprintf(stderr, "Warning: could not load DBC '%s' — running raw-frame benchmark\n",
                     cfg.dbc_path);
         } else if (!cfg.quiet) {
             printf("  DBC loaded        : %zu messages defined\n", dbc->message_count);
@@ -215,7 +215,7 @@ int main(int argc, char *argv[]) {
 
         int res = can_bus_read(bus, &msg, 100);
         if (res <= 0) {
-            /* Timeout or transient error â€” skip */
+            /* Timeout or transient error — skip */
             continue;
         }
 
@@ -256,9 +256,9 @@ int main(int argc, char *argv[]) {
     printf("  Frames processed  : %llu\n", (unsigned long long)frames_processed);
     printf("  Elapsed time      : %.6f seconds\n", elapsed_s);
     printf("  Throughput        : %.2f frames/sec\n", fps);
-    printf("  Latency (min)     : %.3f Âµs\n", stats.min_us);
-    printf("  Latency (avg)     : %.3f Âµs (Â±%.3f Âµs stddev)\n", avg_latency, stddev_latency);
-    printf("  Latency (max)     : %.3f Âµs\n", stats.max_us);
+    printf("  Latency (min)     : %.3f µs\n", stats.min_us);
+    printf("  Latency (avg)     : %.3f µs (±%.3f µs stddev)\n", avg_latency, stddev_latency);
+    printf("  Latency (max)     : %.3f µs\n", stats.max_us);
     if (dbc) {
         printf("  Signals decoded   : %llu\n", (unsigned long long)frames_decoded);
     }

@@ -52,6 +52,8 @@ set(TEST_SUITES
     test_metrics
     test_router
     test_decoder
+    test_fixtures
+    test_edge_cases
 )
 
 foreach(TEST_NAME ${TEST_SUITES})

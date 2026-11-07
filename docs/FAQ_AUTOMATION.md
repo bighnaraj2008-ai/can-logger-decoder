@@ -1,4 +1,4 @@
-# Frequently Asked Questions â€” CI/CD Automation (Day 4)
+# Frequently Asked Questions — CI/CD Automation (Day 4)
 
 ---
 

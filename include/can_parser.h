@@ -5,6 +5,8 @@
 #include <stdbool.h>
 #include <stddef.h>
 
+#include "can_core.h"
+
 #if defined(__linux__)
     #include <sys/socket.h>
     #include <sys/ioctl.h>
@@ -16,13 +18,27 @@
     #define CAN_HAS_SOCKETCAN 0
     /* Fallback definitions for non-Linux compilation */
     typedef uint32_t canid_t;
+    #ifndef CAN_EFF_FLAG
     #define CAN_EFF_FLAG 0x80000000U
+    #endif
+    #ifndef CAN_RTR_FLAG
     #define CAN_RTR_FLAG 0x40000000U
+    #endif
+    #ifndef CAN_ERR_FLAG
     #define CAN_ERR_FLAG 0x20000000U
+    #endif
+    #ifndef CAN_SFF_MASK
     #define CAN_SFF_MASK 0x000007FFU
+    #endif
+    #ifndef CAN_EFF_MASK
     #define CAN_EFF_MASK 0x1FFFFFFFU
+    #endif
+    #ifndef CAN_MAX_DLEN
     #define CAN_MAX_DLEN 8
+    #endif
 
+    #ifndef STRUCT_CAN_FRAME_DEFINED
+    #define STRUCT_CAN_FRAME_DEFINED
     struct can_frame {
         canid_t can_id;
         uint8_t can_dlc;
@@ -31,10 +47,15 @@
         uint8_t __res1;
         uint8_t data[CAN_MAX_DLEN];
     };
+    #endif
 #endif
 
+#ifndef CAN_MAX_DATA_LEN
 #define CAN_MAX_DATA_LEN 8
+#endif
 
+#ifndef CAN_MSG_T_DEFINED
+#define CAN_MSG_T_DEFINED
 /**
  * @brief High-level CAN message representation
  */
@@ -47,7 +68,10 @@ typedef struct {
     bool     is_extended;     /**< True if 29-bit extended frame */
     bool     is_rtr;          /**< True if Remote Transmission Request */
     bool     is_error;        /**< True if error frame */
+    uint8_t  checksum;        /**< Payload checksum byte (when present) */
+    bool     checksum_valid;  /**< True when payload checksum verified */
 } can_msg_t;
+#endif
 
 /**
  * @brief Opaque CAN bus handle

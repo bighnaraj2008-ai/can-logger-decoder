@@ -1,4 +1,4 @@
-# Security Policy â€” can-logger-decoder
+# Security Policy — can-logger-decoder
 
 ## Reporting Vulnerabilities
 Please do not file public GitHub issues for security vulnerabilities.

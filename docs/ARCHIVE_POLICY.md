@@ -1,4 +1,4 @@
-# Telemetry Data Archiving & Retention Policy â€” can-logger-decoder (Day 5)
+# Telemetry Data Archiving & Retention Policy — can-logger-decoder (Day 5)
 
 This document establishes the storage tiering, compression, and retention rules
 for automotive CAN bus logs captured by `can-logger-decoder`.

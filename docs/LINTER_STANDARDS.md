@@ -1,4 +1,4 @@
-# C Coding Standards & Linter Rule Guide â€” can-logger-decoder (Day 4)
+# C Coding Standards & Linter Rule Guide — can-logger-decoder (Day 4)
 
 This document establishes the official C coding conventions, static analysis
 rules, and linter enforcement standards for the `can-logger-decoder` codebase.

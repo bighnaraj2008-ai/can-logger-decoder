@@ -115,8 +115,13 @@ for test_name in "${TESTS[@]}"; do
         suite_rc=$?
     fi
 
-    apass=$(grep -c '\[PASS\]' "${out_file}" 2>/dev/null || echo "0")
-    afail=$(grep -c '\[FAIL\]' "${out_file}" 2>/dev/null || echo "0")
+    apass=$(grep -c '\[PASS\]' "${out_file}" 2>/dev/null || true)
+    apass=$(echo "${apass}" | tr -dc '0-9')
+    apass=${apass:-0}
+
+    afail=$(grep -c '\[FAIL\]' "${out_file}" 2>/dev/null || true)
+    afail=$(echo "${afail}" | tr -dc '0-9')
+    afail=${afail:-0}
     rm -f "${out_file}"
 
     TOTAL_ASSERT_PASS=$((TOTAL_ASSERT_PASS + apass))

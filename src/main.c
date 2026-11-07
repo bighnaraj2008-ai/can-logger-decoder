@@ -301,7 +301,7 @@ int main(int argc, char *argv[]) {
 
     /* Release resources */
     if (csv_fp) fclose(csv_fp);
-    if (bus) can_bus_close(bus);
+    can_bus_close(bus);
     if (dbc_db) dbc_free(dbc_db);
 
     return 0;

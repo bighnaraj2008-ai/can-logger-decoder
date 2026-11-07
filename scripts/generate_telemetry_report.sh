@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 #
-# generate_telemetry_report.sh â€” Automated Telemetry Summary Report Generator
+# generate_telemetry_report.sh — Automated Telemetry Summary Report Generator
 #
 set -euo pipefail
 

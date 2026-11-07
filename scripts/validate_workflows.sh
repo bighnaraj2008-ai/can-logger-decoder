@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 #
-# validate_workflows.sh â€” Actionlint & syntax verification for GitHub workflows
+# validate_workflows.sh — Actionlint & syntax verification for GitHub workflows
 #
 set -euo pipefail
 
@@ -8,7 +8,7 @@ REPO_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 WORKFLOW_DIR="${REPO_ROOT}/.github/workflows"
 
 echo "================================================================"
-echo " can-logger-decoder â€” Workflow Syntax & Lint Verification"
+echo " can-logger-decoder — Workflow Syntax & Lint Verification"
 echo "================================================================"
 echo "Workflow directory: ${WORKFLOW_DIR}"
 echo ""

@@ -1,4 +1,4 @@
-# CI/CD Pipeline â€” can-logger-decoder (Day 4)
+# CI/CD Pipeline — can-logger-decoder (Day 4)
 
 This document describes the automated CI/CD pipeline architecture, linting
 standards, and build matrix configuration for the `can-logger-decoder`
@@ -22,7 +22,7 @@ same branch/PR, preventing stale builds from blocking newer commits.
 
 ---
 
-## 2. ci_build.yml â€” Automated Build Pipeline
+## 2. ci_build.yml — Automated Build Pipeline
 
 **Trigger:** `push` and `pull_request` on `main` / `master`
 
@@ -50,7 +50,7 @@ if one fails.
 
 ---
 
-## 3. static_analysis.yml â€” Static Analysis (cppcheck + clang-tidy)
+## 3. static_analysis.yml — Static Analysis (cppcheck + clang-tidy)
 
 **Trigger:** `push` and `pull_request` on `main` / `master`
 
@@ -75,7 +75,7 @@ this is a pure C99 project.
 
 ---
 
-## 4. release_artifacts.yml â€” Cross-Compile & Package Release Binaries
+## 4. release_artifacts.yml — Cross-Compile & Package Release Binaries
 
 **Trigger:** push tags matching `v*`
 
@@ -103,7 +103,7 @@ this is a pure C99 project.
 
 ## 5. Linting Standards
 
-### `.clang-format` â€” strict C style
+### `.clang-format` — strict C style
 
 Based on LLVM style, customized for C (`Language: C`, `Standard: c11`):
 
@@ -117,16 +117,16 @@ Based on LLVM style, customized for C (`Language: C`, `Standard: c11`):
 Enforced locally by `scripts/check_formatting.sh` and on CI via
 `clang-format --dry-run --Werror`.
 
-### `.clang-tidy` â€” static analysis checks
+### `.clang-tidy` — static analysis checks
 
 Checks enabled (non-exhaustive):
 
-- `clang-analyzer-*` â€” null dereference, dead stores, memory leaks (MallocChecker)
-- `bugprone-*` â€” uninitialized variables, resource management, easily-swappable parameters
-- `portability-*` â€” portable code constructs
-- `performance-*` â€” unnecessary copies, performance anti-patterns
-- `readability-*` â€” consistent naming, style, and documentation
-- `misc-*` â€” miscellaneous correctness and style
+- `clang-analyzer-*` — null dereference, dead stores, memory leaks (MallocChecker)
+- `bugprone-*` — uninitialized variables, resource management, easily-swappable parameters
+- `portability-*` — portable code constructs
+- `performance-*` — unnecessary copies, performance anti-patterns
+- `readability-*` — consistent naming, style, and documentation
+- `misc-*` — miscellaneous correctness and style
 
 C++-only checks are disabled. `clang-analyzer-cplusplus*` and
 `clang-analyzer-optin.cplusplus.VirtualCall` are explicitly excluded.

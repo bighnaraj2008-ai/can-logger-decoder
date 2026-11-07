@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 #
-# validate_warehouse.sh â€” Master Repository Health & Hygiene Validator
+# validate_warehouse.sh — Master Repository Health & Hygiene Validator
 #
 set -euo pipefail
 
@@ -8,7 +8,7 @@ REPO_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 cd "${REPO_ROOT}"
 
 echo "================================================================"
-echo " CAN Logger Decoder â€” Master Repository Hygiene Validation     "
+echo " CAN Logger Decoder — Master Repository Hygiene Validation     "
 echo "================================================================"
 
 ERRORS=0

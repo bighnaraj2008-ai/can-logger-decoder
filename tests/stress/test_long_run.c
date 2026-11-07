@@ -1,5 +1,5 @@
 /*
- * test_long_run.c â€” Long-Run Endurance and Stability Stress Test
+ * test_long_run.c — Long-Run Endurance and Stability Stress Test
  *
  * Simulates high-rate sustained frame ingestion over simulated durations
  * to verify memory stability, zero buffer leak, and zero crash under load.

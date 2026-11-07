@@ -1,4 +1,4 @@
-# CI Runner Performance Benchmark Tracking Guide â€” can-logger-decoder (Day 4)
+# CI Runner Performance Benchmark Tracking Guide — can-logger-decoder (Day 4)
 
 This document tracks execution time, memory footprint, and CPU efficiency
 across GitHub Actions standard runner environments for CI build jobs.

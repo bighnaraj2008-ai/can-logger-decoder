@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 #
-# format_code.sh â€” Automated source formatting fixer for can-logger-decoder (Day 4)
+# format_code.sh — Automated source formatting fixer for can-logger-decoder (Day 4)
 #
 # Formats all C source and header files under src/, include/, and tests/
 # in-place according to .clang-format.
@@ -10,7 +10,7 @@ set -euo pipefail
 REPO_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 
 echo "================================================================"
-echo " can-logger-decoder â€” In-Place Source Formatter (clang-format)"
+echo " can-logger-decoder — In-Place Source Formatter (clang-format)"
 echo "================================================================"
 echo "Repo root: ${REPO_ROOT}"
 echo ""

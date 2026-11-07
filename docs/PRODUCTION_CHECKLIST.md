@@ -1,4 +1,4 @@
-# Production Deployment Readiness Checklist â€” can-logger-decoder (Day 5)
+# Production Deployment Readiness Checklist — can-logger-decoder (Day 5)
 
 This checklist must be validated prior to deploying `can-logger-decoder`
 into production automotive or industrial embedded nodes.
@@ -6,7 +6,7 @@ into production automotive or industrial embedded nodes.
 ---
 
 ## 1. Hardware & Physical Layer
-- [ ] 120 Î© bus termination verified across CAN_H and CAN_L with power off (60 Î© total).
+- [ ] 120 Ω bus termination verified across CAN_H and CAN_L with power off (60 Ω total).
 - [ ] Logic level shifter operating correctly between 3.3V host MCU and 5V CAN transceiver.
 - [ ] MCP2515 crystal oscillator frequency matches driver configuration (`MCP2515_DEFAULT_OSC_HZ`).
 - [ ] Interrupt line (`/INT`) active-low connected to hardware interrupt GPIO.

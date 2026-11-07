@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 #
-# prune_buffer.sh â€” CAN Log Rotation & Buffer Cleanup Utility
+# prune_buffer.sh — CAN Log Rotation & Buffer Cleanup Utility
 #
 # Manages log rotation and buffer cleanup on resource-constrained embedded
 # nodes. Supports size-based rotation, age-based pruning, disk-space
@@ -84,7 +84,7 @@ done
 # ----------------------------------------------------------------------
 if [[ "${DRY_RUN}" == true ]]; then
     echo -e "${CYAN}================================================================${NC}"
-    echo -e "${CYAN}  PRUNE BUFFER â€” DRY RUN (no actions will be executed)         ${NC}"
+    echo -e "${CYAN}  PRUNE BUFFER — DRY RUN (no actions will be executed)         ${NC}"
     echo -e "${CYAN}================================================================${NC}"
     echo "  Log directory     : ${LOG_DIR}"
     echo "  Max file size     : ${MAX_SIZE:-none}"
@@ -99,7 +99,7 @@ fi
 # Validate log directory
 # ----------------------------------------------------------------------
 if [[ ! -d "${LOG_DIR}" ]]; then
-    echo -e "${YELLOW}[INFO]${NC} Log directory '${LOG_DIR}' does not exist â€” nothing to prune."
+    echo -e "${YELLOW}[INFO]${NC} Log directory '${LOG_DIR}' does not exist — nothing to prune."
     exit 0
 fi
 
@@ -181,7 +181,7 @@ fi
 # ----------------------------------------------------------------------
 echo -e "${CYAN}================================================================${NC}"
 if [[ "${ACTIONS_TAKEN}" -eq 0 ]]; then
-    echo -e "${GREEN}  NO ACTIONS REQUIRED â€” BUFFER IS CLEAN${NC}"
+    echo -e "${GREEN}  NO ACTIONS REQUIRED — BUFFER IS CLEAN${NC}"
 else
     echo -e "${GREEN}  ACTIONS TAKEN: ${ACTIONS_TAKEN}${NC}"
 fi

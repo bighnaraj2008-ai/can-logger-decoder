@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 #
-# clean_all.sh â€” Master Workspace Cleaning and Reset Utility
+# clean_all.sh — Master Workspace Cleaning and Reset Utility
 #
 set -euo pipefail
 

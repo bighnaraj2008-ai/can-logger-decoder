@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 #
-# run_benchmarks.sh â€” Automated Benchmark Execution Runner
+# run_benchmarks.sh — Automated Benchmark Execution Runner
 #
 set -euo pipefail
 
@@ -8,7 +8,7 @@ REPO_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 cd "${REPO_ROOT}"
 
 echo "================================================================"
-echo " CAN Logger Decoder â€” Automated Benchmark Runner               "
+echo " CAN Logger Decoder — Automated Benchmark Runner               "
 echo "================================================================"
 
 if command -v make >/dev/null 2>&1; then

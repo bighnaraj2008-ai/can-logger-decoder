@@ -1,4 +1,4 @@
-# Security Policy & Vulnerability Disclosure â€” can-logger-decoder
+# Security Policy & Vulnerability Disclosure — can-logger-decoder
 
 The `can-logger-decoder` team takes automotive software security and memory
 safety seriously.

@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 #
-# schema_metadata_tests.sh â€” Repository metadata validation test
+# schema_metadata_tests.sh — Repository metadata validation test
 #
 set -euo pipefail
 
@@ -8,7 +8,7 @@ REPO_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 cd "${REPO_ROOT}"
 
 echo "================================================================"
-echo " can-logger-decoder â€” Repository Schema & Metadata Validation"
+echo " can-logger-decoder — Repository Schema & Metadata Validation"
 echo "================================================================"
 
 ERRORS=0

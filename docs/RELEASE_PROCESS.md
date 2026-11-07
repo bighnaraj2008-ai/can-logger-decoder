@@ -1,4 +1,4 @@
-# Release Process & Tagging Runbook â€” can-logger-decoder (Day 4)
+# Release Process & Tagging Runbook — can-logger-decoder (Day 4)
 
 This runbook outlines the checklist and procedure for tagging and publishing
 new production releases of `can-logger-decoder`.

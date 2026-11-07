@@ -1,5 +1,5 @@
 /*
- * embedded_integration_example.c â€” Sample Embedded Integration
+ * embedded_integration_example.c — Sample Embedded Integration
  *
  * Demonstrates how to initialize MCP2515 over SPI, register frame callbacks,
  * and integrate can-logger-decoder into an embedded RTOS (e.g. FreeRTOS)

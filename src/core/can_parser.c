@@ -405,7 +405,7 @@ int can_bus_read(can_bus_t *bus, can_msg_t *msg, int timeout_ms) {
     can_frame_init(&cf);
     cf.can_id = wire.can_id;
     cf.can_dlc = wire.can_dlc;
-    if (cf.can_dlc > CAN_FRAME_DATA_LEN) cf.can_dlc = CAN_FRAME_DATA_LEN;
+    if (cf.can_dlc > CAN_FRAME_MAX_DATA_LEN) cf.can_dlc = CAN_FRAME_MAX_DATA_LEN;
     memcpy(cf.data, wire.data, (size_t)cf.can_dlc);
     cf.is_extended = ((wire.can_id & CAN_EFF_FLAG) != 0u);
     cf.is_rtr = ((wire.can_id & CAN_RTR_FLAG) != 0u);

@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 #
-# export_logs.sh â€” CAN Log Export Utility
+# export_logs.sh — CAN Log Export Utility
 #
 # Exports decoded CAN logs (CSV) into structured CSV or JSON archives for
 # offline analysis. Supports filtering by time range, CAN ID, and message
@@ -119,7 +119,7 @@ fi
 # ----------------------------------------------------------------------
 if [[ "${DRY_RUN}" == true ]]; then
     echo -e "${CYAN}================================================================${NC}"
-    echo -e "${CYAN}  EXPORT LOGS â€” DRY RUN (no files will be written)              ${NC}"
+    echo -e "${CYAN}  EXPORT LOGS — DRY RUN (no files will be written)              ${NC}"
     echo -e "${CYAN}================================================================${NC}"
     echo "  Input file      : ${INPUT_FILE}"
     echo "  Output format   : ${OUTPUT_FORMAT}"
@@ -190,7 +190,7 @@ while IFS= read -r line || [[ -n "${line}" ]]; do
         fi
     fi
 
-    # Parse CSV fields (simple comma split â€” no quoted fields expected)
+    # Parse CSV fields (simple comma split — no quoted fields expected)
     IFS=',' read -r ts_iso ts_sec can_id_hex can_id_dec msg_name dlc payload_hex sig_name raw_val phys_val unit <<< "${line}"
 
     # Apply CAN ID filter
@@ -221,7 +221,7 @@ while IFS= read -r line || [[ -n "${line}" ]]; do
     if [[ "${OUTPUT_FORMAT}" == "csv" ]]; then
         echo "${ts_iso},${ts_sec},${can_id_hex},${can_id_dec},${msg_name},${dlc},${payload_hex},${sig_name},${raw_val},${phys_val},${unit}" >> "${OUTFILE}"
     else
-        # JSON output â€” accumulate as JSON array
+        # JSON output — accumulate as JSON array
         # Escape any quotes in string fields for JSON safety
         json_msg_name=$(echo "${msg_name}" | sed 's/"/\\"/g')
         json_unit=$(echo "${unit}" | sed 's/"/\\"/g')
@@ -270,7 +270,7 @@ if [[ "${CREATE_CHECKSUM}" == true ]]; then
         shasum -a 256 "${OUTFILE}" > "${OUTFILE}.sha256"
         echo -e "${GREEN}[OK]${NC} Checksum written: ${OUTFILE}.sha256"
     else
-        echo -e "${YELLOW}[WARN]${NC} No sha256sum/shasum available â€” skipping checksum"
+        echo -e "${YELLOW}[WARN]${NC} No sha256sum/shasum available — skipping checksum"
     fi
 fi
 

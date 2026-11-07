@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 #
-# bump_version.sh â€” Release version bumping utility for can-logger-decoder
+# bump_version.sh — Release version bumping utility for can-logger-decoder
 #
 set -euo pipefail
 

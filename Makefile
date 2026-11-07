@@ -28,11 +28,15 @@ APP_OBJS = $(patsubst %.c,$(BUILD_DIR)/%.o,$(notdir $(APP_SRCS)))
 
 TEST_BINS = $(BUILD_DIR)/test_parser $(BUILD_DIR)/test_state_machine \
             $(BUILD_DIR)/test_vcan $(BUILD_DIR)/test_filters \
-            $(BUILD_DIR)/test_metrics $(BUILD_DIR)/test_router
+            $(BUILD_DIR)/test_metrics $(BUILD_DIR)/test_router \
+            $(BUILD_DIR)/test_decoder $(BUILD_DIR)/test_fixtures \
+            $(BUILD_DIR)/test_edge_cases
 
-vpath %.c src src/core src/hardware src/network src/state src/utils tests
+BENCH_BINS = $(BUILD_DIR)/bench_decoder $(BUILD_DIR)/bench_memory
 
-.PHONY: all clean test run prepare
+vpath %.c src src/core src/hardware src/network src/state src/utils tests tests/benchmarks
+
+.PHONY: all clean test run prepare bench
 
 all: prepare $(TARGET)
 
@@ -67,6 +71,11 @@ $(TARGET): $(APP_OBJS) $(LIB_OBJS)
 $(BUILD_DIR)/test_%: tests/test_%.c $(LIB_OBJS) | prepare
 	$(CC) $(CFLAGS) -o $@ $< $(LIB_OBJS) $(LDFLAGS)
 
+$(BUILD_DIR)/bench_%: tests/benchmarks/bench_%.c $(LIB_OBJS) | prepare
+	$(CC) $(CFLAGS) -o $@ $< $(LIB_OBJS) $(LDFLAGS)
+
+bench: prepare $(BENCH_BINS)
+
 test: prepare $(TEST_BINS)
 ifeq ($(OS),Windows_NT)
 	build\test_parser.exe
@@ -75,6 +84,9 @@ ifeq ($(OS),Windows_NT)
 	build\test_filters.exe
 	build\test_metrics.exe
 	build\test_router.exe
+	build\test_decoder.exe
+	build\test_fixtures.exe
+	build\test_edge_cases.exe
 else
 	@for b in $(TEST_BINS); do ./$$b || exit 1; done
 endif
@@ -88,10 +100,10 @@ endif
 
 clean:
 ifeq ($(OS),Windows_NT)
-	@-del /Q /F $(TARGET).exe $(addsuffix .exe,$(TEST_BINS)) $(BUILD_DIR)\*.o 2>nul
+	@-del /Q /F $(TARGET).exe $(addsuffix .exe,$(TEST_BINS)) $(addsuffix .exe,$(BENCH_BINS)) $(BUILD_DIR)\*.o 2>nul
 	@-if exist "$(BUILD_DIR)" rmdir /Q /S "$(BUILD_DIR)" 2>nul
 else
-	@-rm -f $(TARGET) $(TEST_BINS) $(BUILD_DIR)/*.o
+	@-rm -f $(TARGET) $(TEST_BINS) $(BENCH_BINS) $(BUILD_DIR)/*.o
 	@-rm -rf "$(BUILD_DIR)" 2>/dev/null || true
 endif
 
