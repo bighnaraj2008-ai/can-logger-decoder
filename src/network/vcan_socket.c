@@ -25,11 +25,17 @@ int vcan_socket_bind(vcan_socket_t *sock, const char *ifname) {
         return CAN_ERR_INVALID_ARG;
     }
 
+    snprintf(sock->ifname, sizeof(sock->ifname), "%s", ifname);
+
+    if (sock->fd < 0) {
+        sock->fd = vcan_socket_open();
+    }
+
     struct ifreq ifr;
     memset(&ifr, 0, sizeof(ifr));
     snprintf(ifr.ifr_name, sizeof(ifr.ifr_name), "%.15s", ifname);
 
-    if (ioctl(sock->fd, SIOCGIFINDEX, &ifr) < 0) {
+    if (sock->fd < 0 || ioctl(sock->fd, SIOCGIFINDEX, &ifr) < 0) {
         sock->last_err = CAN_ERR_IO;
         return CAN_ERR_IO;
     }
@@ -44,7 +50,6 @@ int vcan_socket_bind(vcan_socket_t *sock, const char *ifname) {
         return CAN_ERR_IO;
     }
 
-    snprintf(sock->ifname, sizeof(sock->ifname), "%s", ifname);
     sock->ifindex = ifr.ifr_ifindex;
     sock->bound = true;
     sock->last_err = (int)CAN_OK;

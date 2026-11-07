@@ -24,7 +24,7 @@ jobs:
           test -s sample.dbc
           grep -q "^VERSION" sample.dbc
           grep -q "^BO_ " sample.dbc
-          grep -q "^SG_ " sample.dbc
+          grep -E -q "^[[:space:]]*SG_ " sample.dbc
           echo "sample.dbc syntax verified."
 
       - name: Validate Test Fixtures Checksums
