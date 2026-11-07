@@ -88,6 +88,14 @@
 #define MCP2515_MODE_CONFIG        0x80u   /**< Configuration mode */
 #define MCP2515_MODE_POWER_UP      0xE0u   /**< Power-up reset default */
 
+/* Convenient aliases for integration tests */
+#define MCP_MODE_MASK              MCP2515_CTRL_MODE_MASK
+#define MCP_MODE_NORMAL            MCP2515_MODE_NORMAL
+#define MCP_MODE_SLEEP             MCP2515_MODE_SLEEP
+#define MCP_MODE_LOOPBACK          MCP2515_MODE_LOOPBACK
+#define MCP_MODE_LISTEN            MCP2515_MODE_LISTEN_ONLY
+#define MCP_MODE_CONFIG            MCP2515_MODE_CONFIG
+
 /* CANSTAT status bits */
 #define MCP2515_STAT_ICODE_MASK    0xE0u   /**< Interrupt code mask */
 #define MCP2515_STAT_TX0IF         0x10u   /**< TX buffer 0 empty */
