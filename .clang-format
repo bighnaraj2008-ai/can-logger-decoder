@@ -1,5 +1,5 @@
 ---
-# CAN Logger & Decoder â€” Strict C Coding Style (Day 4)
+# CAN Logger & Decoder - Strict C Coding Style (Day 4)
 # Enforced by scripts/check_formatting.sh and ci_build.yml / static_analysis.yml
 BasedOnStyle: LLVM
 Language: C
@@ -40,6 +40,5 @@ SortUsingDeclarations: false
 
 # Other
 NamespaceIndentation: None
-PointerAlignment: Right
 
 ...
