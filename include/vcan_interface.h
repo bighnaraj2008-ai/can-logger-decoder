@@ -25,9 +25,12 @@ typedef struct {
     int    ifindex;     /**< Kernel interface index */
     char   ifname[64];  /**< Interface name, e.g. "vcan0" */
     bool   bound;       /**< Whether bind() succeeded */
+    bool   is_open;     /**< Whether socket is active */
     bool   nonblock;    /**< Non-blocking I/O mode */
     int    last_err;    /**< can_error_t from the last failing operation */
 } vcan_socket_t;
+
+typedef vcan_socket_t vcan_handle_t;
 
 #if defined(__linux__)
     #include <sys/socket.h>

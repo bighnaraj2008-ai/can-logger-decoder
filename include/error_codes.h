@@ -55,6 +55,13 @@ static inline const char *can_error_string(can_error_t err) {
     }
 }
 
+/**
+ * @brief Alias for can_error_string for schema metadata test compliance.
+ */
+static inline const char *can_error_str(can_error_t err) {
+    return can_error_string(err);
+}
+
 #ifdef __cplusplus
 }
 #endif

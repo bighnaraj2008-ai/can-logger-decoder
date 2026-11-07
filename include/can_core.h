@@ -28,6 +28,7 @@ extern "C" {
  * ---------------------------------------------------------------------- */
 #define CAN_SFF_MASK   0x000007FFU   /**< Mask for 11-bit standard identifiers */
 #define CAN_EFF_MASK   0x1FFFFFFFU   /**< Mask for 29-bit extended identifiers */
+#define CAN_ERR_MASK   0x1FFFFFFFU   /**< Mask for error frame class */
 #define CAN_EFF_FLAG   0x80000000U   /**< Flag bit: extended frame format */
 #define CAN_RTR_FLAG   0x40000000U   /**< Flag bit: remote transmission request */
 #define CAN_ERR_FLAG   0x20000000U   /**< Flag bit: error frame */
@@ -40,6 +41,7 @@ extern "C" {
 #define CAN_FRAME_MAX_DATA_LEN    8u   /**< Physical payload buffer size in bytes */
 #define CAN_FRAME_DATA_LEN        CAN_FRAME_MAX_DATA_LEN /**< Alias for maximum payload length */
 #define CAN_MAX_DATA_LEN          CAN_FRAME_MAX_DATA_LEN /**< Alias for maximum payload length */
+#define CAN_MAX_DATA_BYTES        CAN_FRAME_MAX_DATA_LEN /**< Alias for maximum payload bytes */
 #define CAN_TIMESTAMP_ISO_LEN    64u   /**< Size of ISO-8601 timestamp buffers */
 
 /* ----------------------------------------------------------------------

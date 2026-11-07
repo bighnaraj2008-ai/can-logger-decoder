@@ -25,6 +25,7 @@ static int test_vcan_bridge_routing(void) {
     vcan_handle_t vcan;
     memset(&vcan, 0, sizeof(vcan));
     vcan.is_open = true;
+    vcan.bound = true;
 
     /* Frame originating on physical bus to be routed across bridge */
     can_frame_t inbound;
